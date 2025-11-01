@@ -3,6 +3,7 @@
 const symbols = []
 const nonTerminalSymbols = []
 const terminalSymbols = []
+const EMPTY = ""
 
 
 
@@ -60,18 +61,63 @@ function condenseRules( expansionRules ){
   function getLeftSides(){ return leftHandSides }
   function getRightSide(){ return rightHandSide }
   
-   
+  return {
+	  getLeftSide,
+	  getRightSides
+  }
 }
 
-function computeFirst(  expansionRules ){
- const sets = []
- symbols.forEach(symbol => {sets[symbol] = []})
- let setsAreChanging = false
+function computeFirst(  expansionRules  ){
 
- while (setsAreChanging){
-   
- }
+const first = []
+terminalSymbols.forEach(symbol => {
+  first[symbol] = new Set()
+  first[symbol].add(symbol)
+})
+nonTerminalSymbols.forEach(symbol => {
+  first[symbol]= new Set()
+})
+
+let setsAreChanging = true
+while (setsAreChanging){
+  let setsChanged = false
+  expansionRules.forEach(rule => {
+    const A = rule.getLeftSide()
+    const B = rule.getRightSide()
+    let rhs = new Set()
+    const firstCopy = new Set(first[A])
+    rhs = rhs.union(B[0])
+    rhs.delete(EMPTY)
+
+    for(let i = 1; i < B.length; i++){
+      rhs = rhs.union(first[ B[i] ])
+      rhs.delete(EMPTY)
+    }
+    if (first[B[B.length - 1]].has(EMPTY)){
+      rhs.add(EMPTY)
+    }
+    first[A] = first[A].union(rhs)
+
+    if(!(Array.from(firstCopy).every(item => first[A].has(item)) && Array.from(first[A]).every(item => firstCopy.has(item)))){
+      setsChanged = true
+    }
+    
+  })
+  setsAreChanging = setsChanged
 }
+  return first
+
+}
+
+function computeFollow( expansionRules, first){
+  const follow = []
+  nonTerminalSymbols.forEach(symbol => {
+    follow[symbol] = new Set()
+
+  })
+}
+
+
 
 
 
