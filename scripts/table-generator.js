@@ -10,15 +10,16 @@ const EMPTY = ""
 
 function makeRuleObjects(ruleString){
 
-    const tokens = ruleString.split(/\s+/)
-
+    const tokens = ruleString.trim(" ").split(/\s+/)
+    if (tokens.length < 3 || tokens[1] !== '->'){
+      return undefined
+    }
     const leftSide = tokens[0]
-    const rightSide = tokens.splice(3)
+    const rightSide = tokens.splice(2)
     const size = leftSide.length
     let index = 0
-    function getRightSide(){ return rightSide }
-
-    function getLeftSide(){ return leftSide }
+    function getRightSide(){ return rightSide } //Right Side is an array
+    function getLeftSide(){ return leftSide } //Left side is a string
     function getIndex(){ return index}
     function setIndex(){ index++ }
 
@@ -32,41 +33,41 @@ function makeRuleObjects(ruleString){
 
 function registerSymbols(ruleItems){
     ruleItems.forEach(rule => {
-        if (nonTerminalSymbols[rule.getRightSide()]){
-          nonTerminalSymbols[rule.getRightSide()] = 1
-          symbols.push(rule.getRightSide())
+        if (!nonTerminalSymbols[rule.getLeftSide()]){
+          nonTerminalSymbols[rule.getLeftSide()] = 1
+          symbols.push(rule.getLeftSide())
         }
 
     })
     ruleItems.forEach(rule => {
-        rule.getLeftSide().forEach(symbol => {
-            if (!nonTerminalSymbols[symbol])
+        rule.getRightSide().forEach(symbol => {
+            if (nonTerminalSymbols[symbol])
                 return
             if (!terminalSymbols[symbol]){
-            terminalSymbols[symbol] = 1
-            symbols.push(symbol)
+              terminalSymbols[symbol] = 1
+              symbols.push(symbol)
             }
         }
         )
     })
     return ruleItems
 }
+/*
+input: map of nonterminal symbols to list of possible right hand sides
 
+*/
 function condenseRules( expansionRules ){
-  const rightHandSides = []
-  const leftHandSide = expansionRules[0].getLeftSide() 
-  expansionRules.forEach(rule => {
-    rightHandSides.push(rule.getLeftSide())
+  const map = []
+  expansionRules.forEach(rule =>{ 
+    const leftSide = rule.getLeftSide()
+    if (!map[leftSide]){
+      map[leftSide] = []
+    }
+    map[leftSide].push(rule.getRightSide())
   })
-  function getLeftSides(){ return leftHandSides }
-  function getRightSide(){ return rightHandSide }
-  
-  return {
-	  getLeftSide,
-	  getRightSides
-  }
+  return map
 }
-
+/*
 function computeFirst(  expansionRules  ){
 
 const first = []
@@ -103,7 +104,7 @@ while (setsAreChanging){
     }
     
   })
-  setsAreChanging = setsChanged
+  setsAreChanging = setsChanged 
 }
   return first
 
@@ -111,11 +112,48 @@ while (setsAreChanging){
 
 function computeFollow( expansionRules, first){
   const follow = []
-  nonTerminalSymbols.forEach(symbol => {
+  nonTerminalSymbols.keys().forEach(symbol => {
     follow[symbol] = new Set()
 
   })
+
+  while ( setsAreChanging ){
+    expansionRules.forEach(rule => {
+      const A = rule.getLeftSide()
+      const B = rule.getRightSides()
+      const trailer = new Set(follow[A])
+
+      for(let k = 0; k < B.length; k++){
+        if (nonTerminalSymbols[B[i]]){
+          follow[B[i]] = follow[B[i]].union(trailer)
+        }
+      }
+    })
+  }
 }
+
+
+*/
+const rulesArea = document.querySelector('#cfg-rules')
+const submitButton = document.querySelector('#submit-grammar-button')
+
+submitButton.addEventListener('click', () => {
+  const  rulesString = rulesArea.value
+  const  ruleStrings = rulesString.split(/\n+/)
+  const  rulesList = ruleStrings.map(rule => makeRuleObjects(rule)).filter(rule => rule)
+  rulesList.forEach(rule => {
+    console.log(`${rule.getLeftSide()} ::= ${rule.getRightSide()}`)
+  })
+  registerSymbols(rulesList)
+  const rulesMap = condenseRules(rulesList)
+  console.log(terminalSymbols)
+  console.log(nonTerminalSymbols)
+  console.log(symbols)
+ 
+  
+
+})
+
 
 
 
