@@ -103,6 +103,26 @@ function computeFirst(  expansionRules  ){
  }
  return firsts
 }
+function removeLeftRecursion( symbol, rules) {
+  const Beta = rules.filter(rule => rule[0] !== symbol)
+  const Alpha = rules.filter(rule => rule[0] === symbol).map(sentence => sentence.slice(1))
+
+  const newSymbol = symbol + "'"
+  const newSymbolExpansions = []
+  const oldSymbolExpansions = []
+  Alpha.forEach(alpha => {
+    newSymbolExpansions.push([...alpha, newSymbol])
+  })
+  Beta.forEach(beta => {
+    oldSymbolExpansions.push([...beta, newSymbol])
+  })
+  newSymbolExpansions.push([EMPTY])
+  return {
+    newSymbol,
+    newSymbolExpansions, 
+    oldSymbolExpansions
+  }
+}
 /*
 function computeFollow( expansionRules, first){
   const follow = []
@@ -140,6 +160,7 @@ submitButton.addEventListener('click', () => {
   })
   registerSymbols(rulesList)
   const rulesMap = condenseRules(rulesList)
+  const mods = removeLeftRecursion("A", rulesMap["A"])
   const firsts = computeFirst(rulesMap)
   console.log(terminalSymbols)
   console.log(nonTerminalSymbols)
