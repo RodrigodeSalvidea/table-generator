@@ -67,49 +67,43 @@ function condenseRules( expansionRules ){
   })
   return map
 }
-/*
+
 function computeFirst(  expansionRules  ){
+ const firsts = []
+ symbols.forEach(symbol => {
+  firsts[symbol] = new Set()
+  if (terminalSymbols[symbol]){
+    firsts[symbol].add(symbol)
+  }
+ })
+ 
 
-const first = []
-terminalSymbols.forEach(symbol => {
-  first[symbol] = new Set()
-  first[symbol].add(symbol)
-})
-nonTerminalSymbols.forEach(symbol => {
-  first[symbol]= new Set()
-})
+ let firstSetsAreChanging = true
+ const nts = Array.from(Object.keys(nonTerminalSymbols))
+ while (firstSetsAreChanging){
 
-let setsAreChanging = true
-while (setsAreChanging){
-  let setsChanged = false
-  expansionRules.forEach(rule => {
-    const A = rule.getLeftSide()
-    const B = rule.getRightSide()
-    let rhs = new Set()
-    const firstCopy = new Set(first[A])
-    rhs = rhs.union(B[0])
-    rhs.delete(EMPTY)
-
-    for(let i = 1; i < B.length; i++){
-      rhs = rhs.union(first[ B[i] ])
-      rhs.delete(EMPTY)
+   nts.forEach((leftSide, index) => {
+    firstSetsAreChanging = false
+    rightSides = expansionRules[leftSide]
+    const rightFirsts = rightSides.map(sentence => firsts[sentence[0]])
+    let setHasChanged = false
+    for(rightFirst of rightFirsts){
+      for (symbol of rightFirst){
+      if (!firsts[leftSide].has(symbol)) {
+        setHasChanged = true
+      }
+      firsts[leftSide].add(symbol)
     }
-    if (first[B[B.length - 1]].has(EMPTY)){
-      rhs.add(EMPTY)
     }
-    first[A] = first[A].union(rhs)
-
-    if(!(Array.from(firstCopy).every(item => first[A].has(item)) && Array.from(first[A]).every(item => firstCopy.has(item)))){
-      setsChanged = true
+    if (setHasChanged){
+      firstSetsAreChanging = true
     }
-    
-  })
-  setsAreChanging = setsChanged 
+   })
+   
+ }
+ return firsts
 }
-  return first
-
-}
-
+/*
 function computeFollow( expansionRules, first){
   const follow = []
   nonTerminalSymbols.keys().forEach(symbol => {
@@ -146,6 +140,7 @@ submitButton.addEventListener('click', () => {
   })
   registerSymbols(rulesList)
   const rulesMap = condenseRules(rulesList)
+  const firsts = computeFirst(rulesMap)
   console.log(terminalSymbols)
   console.log(nonTerminalSymbols)
   console.log(symbols)
