@@ -95,9 +95,7 @@ function initializeRules(rulesString){
 input: map of nonterminal symbols to list of possible right hand sides
 
 */
-function getMap(){
-    return map
-}
+
 function getExpansionRules( symbol ){
     if (terminalSymbols[symbol])
         throw new Error("Tried to expand a terminal symbol")
@@ -125,7 +123,6 @@ function isTerminal(symbol){
 
 return{ 
     initializeRules,
-    getMap,
     getExpansionRules,
     isTerminal,
     getFirst
