@@ -55,7 +55,11 @@ function  getNext(handle){
 function expandHandle( handle ){
   const handles = []
   for(rule of rules){
+<<<<<<< HEAD
     Rules.getExpansions
+=======
+    handle
+>>>>>>> 6935e17 (make namespace functions anonymous)
   }
 }
 
