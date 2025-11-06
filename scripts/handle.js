@@ -1,4 +1,4 @@
-function Handle(){
+const Handle = (() => {
 function makeHandle(rule, endSymbol, index){
   function getRule(){
     return rule
@@ -52,10 +52,10 @@ function  getNext(handle){
   
 
 }
-function expandHandle( handle, rules ){
+function expandHandle( handle ){
   const handles = []
   for(rule of rules){
-    
+    Rules.getExpansions
   }
 }
 
@@ -66,4 +66,4 @@ return {
 
 }
 
-}
+})()
