@@ -1,4 +1,4 @@
-const Rules = (function Rules(){
+const Rules = (() => {
   const map = []
   let rulesList = undefined
   const nonTerminalSymbols = []
@@ -10,7 +10,7 @@ function makeRuleObject(ruleString){
     const tokens = ruleString.trim(" ").split(/\s+/)
     if (tokens.length < 3 || tokens[1] !== '->'){
       return undefined
-    }
+    }getExpansions
     const leftSide = tokens[0]
     const rightSide = tokens.splice(2)
     const size = leftSide.length
@@ -98,22 +98,36 @@ input: map of nonterminal symbols to list of possible right hand sides
 function getMap(){
     return map
 }
-function getExpansions( symbol ){
+function getExpansionRules( symbol ){
     if (terminalSymbols[symbol])
         throw new Error("Tried to expand a terminal symbol")
     if (!nonTerminalSymbols[symbol])
         throw new Error("Tried To expand a symbol that is non registered")
     return map[symbol]
 }
-function getFirsts(){
-    return firsts
+
+function getFirst(symbol){
+    if (!terminalSymbols && !nonTerminalSymbols[symbol]){
+        throw new Error(`symbol ${symbol} is not a registered symbol`)
+    }
+    return firsts[symbol]
+}
+function isTerminal(symbol){
+    if (terminalSymbols[symbol]){
+        return true
+    }
+    if (nonTerminalSymbols[symbol]){
+        return false
+    }
+    throw new Error(`symbol ${symbol} is not registered as a symbol`)
 }
 
 
 return{ 
     initializeRules,
     getMap,
-    getFirsts,
-    getExpansions
+    getExpansionRules,
+    isTerminal,
+    getFirst
 }
 })()
