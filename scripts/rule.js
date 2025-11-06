@@ -1,13 +1,12 @@
 const Rules = (function Rules(){
-let rulesMap = undefined
-let rulesList = undefined
-const nonTerminalSymbols = []
-const terminalSymbols = []
+  const map = []
+  let rulesList = undefined
+  const nonTerminalSymbols = []
+  const terminalSymbols = []
+  const symbols = []
+  const firsts = []
 
-
-
-
-function makeRuleObjects(ruleString){
+function makeRuleObject(ruleString){
     const tokens = ruleString.trim(" ").split(/\s+/)
     if (tokens.length < 3 || tokens[1] !== '->'){
       return undefined
@@ -26,15 +25,17 @@ function makeRuleObjects(ruleString){
     } 
 }
 
-function registerSymbols(ruleItems){
-    ruleItems.forEach(rule => {
+function initializeRules(rulesString){
+   const ruleStrings = rulesString.split(/\n+/)
+   rulesList = ruleStrings.map(rule => makeRuleObject(rule)).filter(rule => rule)
+   rulesList.forEach(rule => {
         if (!nonTerminalSymbols[rule.getLeftSide()]){
           nonTerminalSymbols[rule.getLeftSide()] = 1
           symbols.push(rule.getLeftSide())
         }
 
     })
-    ruleItems.forEach(rule => {
+    rulesList.forEach(rule => {
         rule.getRightSide().forEach(symbol => {
             if (nonTerminalSymbols[symbol])
                 return
@@ -45,27 +46,16 @@ function registerSymbols(ruleItems){
         }
         )
     })
-    return ruleItems
-}
-/*
-input: map of nonterminal symbols to list of possible right hand sides
-
-*/
-function condenseRules( expansionRules ){
-  const map = []
-  expansionRules.forEach(rule =>{ 
+   rulesList.forEach(rule =>{ 
     const leftSide = rule.getLeftSide()
     if (!map[leftSide]){
       map[leftSide] = []
     }
-    map[leftSide].push(rule.getRightSide())
+    map[leftSide].push(rule)
   })
-  return map
-}
 
-function computeFirst(  expansionRules  ){
- const firsts = []
- symbols.forEach(symbol => {
+
+  symbols.forEach(symbol => {
   firsts[symbol] = new Set()
   if (terminalSymbols[symbol]){
     firsts[symbol].add(symbol)
@@ -79,7 +69,7 @@ function computeFirst(  expansionRules  ){
 
    nts.forEach((leftSide, index) => {
     firstSetsAreChanging = false
-    rightSides = expansionRules[leftSide]
+    rightSides = map[leftSide].map(rule => rule.getRightSide())
     const rightFirsts = rightSides.map(sentence => firsts[sentence[0]])
     let setHasChanged = false
     for(rightFirst of rightFirsts){
@@ -96,28 +86,34 @@ function computeFirst(  expansionRules  ){
    })
    
  }
- return firsts
+
+
 }
+
+
+/*
+input: map of nonterminal symbols to list of possible right hand sides
+
+*/
 function getMap(){
-    if (rulesMap){
-        return rulesMap
-    }
-    rulesMap = condenseRules()
-    return rulesMap
+    return map
+}
+function getExpansions( symbol ){
+    if (terminalSymbols[symbol])
+        throw new Error("Tried to expand a terminal symbol")
+    if (!nonTerminalSymbols[symbol])
+        throw new Error("Tried To expand a symbol that is non registered")
+    return map[symbol]
 }
 function getFirsts(){
-    if (firsts){
-        return firsts
-    }
-    firsts = computeFirst()
     return firsts
 }
 
 
 return{ 
-    makeRuleObjects,
-    registerSymbols,
+    initializeRules,
     getMap,
-    getFirsts
+    getFirsts,
+    getExpansions
 }
 })()
