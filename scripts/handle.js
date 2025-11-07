@@ -27,36 +27,14 @@ function  getNext(handle){
   const rule = handle.getRule()
   const index = handle.getIndex() + 1
   const endSymbol = handle.getEnd() 
-  function getRule(){
-    return rule
+  if (index >= rule.get().length){
+    throw new Error(`Attempted to getNext on a handle with a length of ${rule.getRightSide().length} from index ${handle.getIndex()}`)
   }
-  function getEnd(){
-    return endSymbol
-  }
-  function getIndex(){
-    return index
-  }
-  function hasNext(){
-    return rule.getRightSide().length <= index + 1
-  }
-  function getCurrentSymbol(){
-    return rule.getRightSide()[index]
-  }
-  return {
-    getRule,
-    getEnd,
-    getIndex,
-    hasNext,
-    getCurrentSymbol
-  }
-  
+  return makeHandle(rule, endSymbol, index)
 
 }
 function expandHandle( handle ){
-  const handles = []
-  for(rule of rules){
-    Rules.getExpansions
-  }
+  
 }
 
 
