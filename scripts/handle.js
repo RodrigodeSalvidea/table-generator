@@ -15,12 +15,18 @@ function makeHandle(rule, endSymbol, index){
   function getCurrentSymbol(){
     return rule.getRightSide()[index]
   }
+  function toString(){
+    const rightSide = rule.getRightSide()
+    rightSide.splice(index, 0, "•") 
+    return `[${rule.getLeftSide()} ::= ${rightSide.join(" ")}, ${endSymbol}]`
+  }
   return {
     getRule, 
     getEnd, 
     hasNext,
     getIndex,
-    getCurrentSymbol
+    getCurrentSymbol,
+    toString
   }
 }
 function  getNext(handle){
@@ -61,7 +67,8 @@ function equals(handle1, handle2){
 return {
   makeHandle,
   getNext,
-  equals
+  equals,
+  expandHandle,
 
 }
 
