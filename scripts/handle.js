@@ -36,11 +36,14 @@ function  getNext(handle){
 function expandHandle( handle ){
   
 }
-
+function equals(handle1, handle2){
+  return (handle1.getRule() === handle2.getRule() && handle1.getIndex() === handle2.getIndex())
+}
 
 return {
   makeHandle,
-  getNext
+  getNext,
+  equals
 
 }
 
