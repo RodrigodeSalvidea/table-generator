@@ -34,8 +34,23 @@ function  getNext(handle){
 
 }
 function expandHandle( handle ){
+  const rule = handle.getRule()
+  const endSymbol = handle.getEnd()
+	
+  const symbol = handle.getCurrentSymbol()
+  const expansionRules = Rules.getExpansionRules(symbol)
+  if (handle.getIndex() === handle.getRule().getRightSide().length - 1){
+    expansionRules.forEach(rule => {
+      cc.push(makeHandle(rule, endSymbol, 0)
+    })
+  } else{
+    const first = Rules.getFirst( handle.getRule().getRightSide()[handle.getIndex() + 1] )
+    first.forEach(s => {
+      cc.push(makeHandle, s, 0)
+    })
 
-  
+  }
+   return cc
 }
 function equals(handle1, handle2){
   return (handle1.getRule() === handle2.getRule() && 
