@@ -5,6 +5,7 @@ const Rules = (() => {
   const terminalSymbols = []
   const symbols = []
   const firsts = []
+  let goal = undefined
 
 function makeRuleObject(ruleString){
     const tokens = ruleString.trim(" ").split(/\s+/)
@@ -27,16 +28,20 @@ function makeRuleObject(ruleString){
 
 function initializeRules(rulesString){
    const ruleStrings = rulesString.split(/\n+/)
+   const existsInLeft = []
+   const existsInRight = []
    rulesList = ruleStrings.map(rule => makeRuleObject(rule)).filter(rule => rule)
    rulesList.forEach(rule => {
         if (!nonTerminalSymbols[rule.getLeftSide()]){
           nonTerminalSymbols[rule.getLeftSide()] = 1
           symbols.push(rule.getLeftSide())
+	  existsInLeft[rule.getLeftSide()] = true
         }
 
     })
     rulesList.forEach(rule => {
         rule.getRightSide().forEach(symbol => {
+	    existsInRight[symbol] = true
             if (nonTerminalSymbols[symbol])
                 return
             if (!terminalSymbols[symbol]){
@@ -88,13 +93,17 @@ function initializeRules(rulesString){
  }
 
 
+  const goalCandidates = symbols.filter(s => existsInLeft[s] && !existsInRight[s])
+  if (goalCandidates.length > 1){
+    throw new Error('There is more than one goal symbol')
+  }
+  if (goalCandidates.length == 0){
+    goal = null
+  }
+  return goalCandidates[0]
+
 }
 
-
-/*
-input: map of nonterminal symbols to list of possible right hand sides
-
-*/
 
 function getExpansionRules( symbol ){
     if (terminalSymbols[symbol])
