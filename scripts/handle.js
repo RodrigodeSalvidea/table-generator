@@ -49,7 +49,7 @@ function expandHandle( handle ){
   const expansionRules = Rules.getExpansionRules(symbol)
   if (handle.getIndex() === handle.getRule().getRightSide().length - 1){
     expansionRules.forEach(rule => {
-      cc.push(makeHandle(rule, endSymbol, 0)
+      cc.push(makeHandle(rule, endSymbol, 0))
     })
   } else{
     const first = Rules.getFirst( handle.getRule().getRightSide()[handle.getIndex() + 1] )
@@ -97,6 +97,7 @@ return {
   getNext,
   equals,
   expandHandle,
+  findCanonicalCollection
 
 }
 
