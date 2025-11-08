@@ -10,7 +10,7 @@ function makeRuleObject(ruleString){
     const tokens = ruleString.trim(" ").split(/\s+/)
     if (tokens.length < 3 || tokens[1] !== '->'){
       return undefined
-    }getExpansions
+    }
     const leftSide = tokens[0]
     const rightSide = tokens.splice(2)
     const size = leftSide.length
@@ -119,12 +119,13 @@ function isTerminal(symbol){
     }
     throw new Error(`symbol ${symbol} is not registered as a symbol`)
 }
-
+function getAllRules(){ return rulesList }
 
 return{ 
     initializeRules,
     getExpansionRules,
     isTerminal,
-    getFirst
+    getFirst,
+    getAllRules
 }
 })()
