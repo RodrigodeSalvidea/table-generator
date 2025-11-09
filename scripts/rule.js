@@ -15,7 +15,7 @@ function makeRuleObject(ruleString){
     const leftSide = tokens[0]
     const rightSide = tokens.splice(2)
     const size = leftSide.length
-    let index = 0
+  
     function getRightSide(){ return rightSide } //Right Side is an array
     function getLeftSide(){ return leftSide } //Left side is a string
 
