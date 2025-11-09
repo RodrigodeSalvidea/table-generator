@@ -6,7 +6,7 @@ const Rules = (() => {
   const symbols = []
   const firsts = []
   let goal = undefined
-
+  let goalCandidates = []
 function makeRuleObject(ruleString){
     const tokens = ruleString.trim(" ").split(/\s+/)
     if (tokens.length < 3 || tokens[1] !== '->'){
@@ -15,7 +15,7 @@ function makeRuleObject(ruleString){
     const leftSide = tokens[0]
     const rightSide = tokens.splice(2)
     const size = leftSide.length
-  
+    
     function getRightSide(){ return rightSide } //Right Side is an array
     function getLeftSide(){ return leftSide } //Left side is a string
 
@@ -93,7 +93,10 @@ function initializeRules(rulesString){
  }
 
 
-  const goalCandidates = symbols.filter(s => existsInLeft[s] && !existsInRight[s])
+  goalCandidates = symbols.filter(s => existsInLeft[s] && !existsInRight[s])
+  
+}
+function getGoal(){
   if (goalCandidates.length > 1){
     throw new Error('There is more than one goal symbol')
   }
@@ -101,10 +104,7 @@ function initializeRules(rulesString){
     goal = null
   }
   return goalCandidates[0]
-
 }
-
-
 function getExpansionRules( symbol ){
     if (terminalSymbols[symbol])
         throw new Error("Tried to expand a terminal symbol")
