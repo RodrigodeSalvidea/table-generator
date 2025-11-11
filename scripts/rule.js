@@ -135,6 +135,7 @@ return{
     getExpansionRules,
     isTerminal,
     getFirst,
-    getAllRules
+    getAllRules,
+    getGoal
 }
 })()

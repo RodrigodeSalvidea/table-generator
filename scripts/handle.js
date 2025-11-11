@@ -15,10 +15,10 @@ function makeHandle(rule, endSymbol, index){
   function getCurrentSymbol(){
     if (rule.getRightSide()[index])
       return rule.getRightSide()[index]
-    return EMPTY
+    throw new Error("Attempted to get current symbol on a handle where the current symbol is undefined")
   }
   function toString(){
-    const rightSide = rule.getRightSide()
+    const rightSide = Array.from(rule.getRightSide())
     rightSide.splice(index, 0, "•") 
     return `[${rule.getLeftSide()} ::= ${rightSide.join(" ")}, ${endSymbol}]`
   }
@@ -46,7 +46,11 @@ function expandHandle( handle ){
   const endSymbol = handle.getEnd()
 	
   const symbol = handle.getCurrentSymbol()
+  if (Rules.isTerminal(symbol)){
+    return []
+  }
   const expansionRules = Rules.getExpansionRules(symbol)
+  const cc = []
   if (handle.getIndex() === handle.getRule().getRightSide().length - 1){
     expansionRules.forEach(rule => {
       cc.push(makeHandle(rule, endSymbol, 0))
@@ -54,7 +58,9 @@ function expandHandle( handle ){
   } else{
     const first = Rules.getFirst( handle.getRule().getRightSide()[handle.getIndex() + 1] )
     first.forEach(s => {
-      cc.push(makeHandle, s, 0)
+      expansionRules.forEach(rule => {
+        cc.push(makeHandle(rule, s, 0))
+      })
     })
 
   }
@@ -74,14 +80,14 @@ function findCanonicalCollection(handle){
   s.push(handle)
   while (setIsChanging){ 
     let n = []
-    for (h in s){
+    s.forEach(h => {
     const expansions = expandHandle(h)
     expansions.forEach(e => {
       if (s.every(item => !equals(item, e)) && n.every(item => !equals(item,e))){
         n.push(e) 
       }
     })
-    }
+    })
   
     if (n.length === 0){
       setIsChanging = false
