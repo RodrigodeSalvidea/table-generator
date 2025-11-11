@@ -6,14 +6,15 @@ const CC = (() => {
     let i = 0
     
     function getCollection(handle){
-        if (handleMap[handle.getRule()] === undefined){
-            handleMap[handle.getRule()] = []
+        console.log(`${handle}`)
+        if (handleMap[handle.getRule().getId()] === undefined){
+            handleMap[handle.getRule().getId()] = []
         }
-        if (handleMap[handle.getRule()][handle.getEnd()] === undefined){
-            handleMap[handle.getRule()][handle.getEnd()] = []
+        if (handleMap[handle.getRule().getId()][handle.getEnd()] === undefined){
+            handleMap[handle.getRule().getId()][handle.getEnd()] = []
         }
-        if (handleMap[handle.getRule()][handle.getEnd()][handle.getIndex()] !== undefined ){
-            return Array.from(handleMap[handle.getRule()][handle.getEnd()][handle.getIndex()])
+        if (handleMap[handle.getRule().getId()][handle.getEnd()][handle.getIndex()] !== undefined ){
+            return Array.from(handleMap[handle.getRule().getId()][handle.getEnd()][handle.getIndex()])
         }
 
         const collection = []
@@ -21,18 +22,19 @@ const CC = (() => {
         let rep = undefined
         const cci = Handle.findCanonicalCollection(handle)
         cci.forEach(h => {
-            collection.push(h)
-            if (handleMap[h.getRule()] === undefined){
-                handleMap[h.getRule()] = []
+            if (handleMap[h.getRule().getId()] === undefined){
+                handleMap[h.getRule().getId()] = []
             }
-            if (handleMap[h.getRule()][h.getEnd()] === undefined ){
-                handleMap[h.getRule()][h.getEnd()] = []
+            if (handleMap[h.getRule().getId()][h.getEnd()] === undefined ){
+                handleMap[h.getRule().getId()][h.getEnd()] = []
             }
-            if (handleMap[h.getRule()][h.getEnd()][h.getIndex()]){
+            if (handleMap[h.getRule().getId()][h.getEnd()][h.getIndex()]){
                 allDescendantsAreNew = false
                 rep = h
+            }else{
+                collection.push(h)
             }
-            handleMap[h.getRule()][h.getEnd()][h.getIndex()]
+            handleMap[h.getRule().getId()][h.getEnd()][h.getIndex()]
         })
         
         let obj
@@ -43,14 +45,16 @@ const CC = (() => {
             }
         }else{
             obj = {
-                index: handleMap[h.getRule()][h.getEnd()][h.getIndex()].index,
-                collection: collection
+                index: handleMap[rep.getRule().getId()][rep.getEnd()][rep.getIndex()].index,
+                collection: [...collection, ...handleMap[rep.getRule().getId()][rep.getEnd()][rep.getIndex()].collection]
             }
         }
-        cci.forEach(h => {
-            handleMap[h.getRule()][h.getEnd()][h.getIndex()] = obj
+        obj.collection.forEach(h => {
+            handleMap[h.getRule().getId()][h.getEnd()][h.getIndex()] = obj
         })
         collections[obj.index] = obj
+        console.log(obj)
+        obj.collection.forEach(item => console.log(`${item}`))
         return obj
     }
     
@@ -64,18 +68,19 @@ const CC = (() => {
               if(gotoMap[symbol]=== undefined){
                 gotoMap[symbol] = []
               }
-              gotoMap[symbol].push(item.getNext()) 
+              gotoMap[symbol].push(Handle.getNext(item)) 
             })
         return gotoMap
     }
 
     function findCompleteCC(entryHandle ){
-        assert(collections.length === 0)
+       // assert(collections.length === 0)
         getCollection(entryHandle)
         while(true){
             const collectionsCopy = Array.from(collections)
             collectionsCopy.forEach(c => {
                 const gotos = getGotos(c)
+                if (gotoTable[c.index] === undefined){gotoTable[c.index] = []}
                 Object.keys(gotos).forEach(key => {
                     gotos[key].forEach(item => getCollection(item))
                     gotoTable[c.index][key] = getCollection(gotos[key][0]).index
@@ -99,7 +104,7 @@ const CC = (() => {
             if (!item.hasNext() && item.getEnd() !== EOF){
                 actionTable[cc.index][item.getEnd()] = {
                     action: "reduce",
-                    rule: item.getRule()
+                    rule: item.getRule().getId()
                 }
             }
             if (!item.hasNext() && item.getEnd() === EOF){

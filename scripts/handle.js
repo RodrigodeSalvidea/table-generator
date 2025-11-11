@@ -7,7 +7,7 @@ function makeHandle(rule, endSymbol, index){
     return endSymbol
   }
   function hasNext(){
-    return rule.getRightSide().length <= index + 1
+    return index < rule.getRightSide().length
   }
   function getIndex(){
     return index
@@ -35,8 +35,8 @@ function  getNext(handle){
   const rule = handle.getRule()
   const index = handle.getIndex() + 1
   const endSymbol = handle.getEnd() 
-  if (index >=  rule.get().length){
-    throw new Error(`Attempted to getNext on a handle with a length of ${rule.getRightSide().length} from index ${handle.getIndex()}`)
+  if (index ===  rule.getRightSide().length + 1){
+    throw new Error(`Attempted to getNext on a handle with a length of ${rule.getRightSide().length} from index ${index - 1}`)
   }
   return makeHandle(rule, endSymbol, index)
 
@@ -44,7 +44,7 @@ function  getNext(handle){
 function expandHandle( handle ){
   const rule = handle.getRule()
   const endSymbol = handle.getEnd()
-	
+//	console.log(`${handle}`)
   const symbol = handle.getCurrentSymbol()
   if (Rules.isTerminal(symbol)){
     return []
@@ -81,6 +81,9 @@ function findCanonicalCollection(handle){
   while (setIsChanging){ 
     let n = []
     s.forEach(h => {
+    if (!h.hasNext()){
+      return
+    }
     const expansions = expandHandle(h)
     expansions.forEach(e => {
       if (s.every(item => !equals(item, e)) && n.every(item => !equals(item,e))){

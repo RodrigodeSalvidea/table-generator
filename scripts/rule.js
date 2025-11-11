@@ -7,6 +7,7 @@ const Rules = (() => {
   const firsts = []
   let goal = undefined
   let goalCandidates = []
+  let i = -1
 function makeRuleObject(ruleString){
     const tokens = ruleString.trim(" ").split(/\s+/)
     if (tokens.length < 3 || tokens[1] !== '->'){
@@ -15,14 +16,15 @@ function makeRuleObject(ruleString){
     const leftSide = tokens[0]
     const rightSide = tokens.splice(2)
     const size = leftSide.length
-    
+    const id = ++i   
     function getRightSide(){ return rightSide } //Right Side is an array
     function getLeftSide(){ return leftSide } //Left side is a string
-
+    function getId(){return id} 
 
     return {
         getLeftSide,
         getRightSide,
+        getId
     } 
 }
 
