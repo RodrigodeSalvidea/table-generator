@@ -14,7 +14,7 @@ const CC = (() => {
             handleMap[handle.getRule().getId()][handle.getEnd()] = []
         }
         if (handleMap[handle.getRule().getId()][handle.getEnd()][handle.getIndex()] !== undefined ){
-            return Array.from(handleMap[handle.getRule().getId()][handle.getEnd()][handle.getIndex()])
+            return handleMap[handle.getRule().getId()][handle.getEnd()][handle.getIndex()]
         }
 
         const collection = []
@@ -80,7 +80,9 @@ const CC = (() => {
             const collectionsCopy = Array.from(collections)
             collectionsCopy.forEach(c => {
                 const gotos = getGotos(c)
-                if (gotoTable[c.index] === undefined){gotoTable[c.index] = []}
+                if (gotoTable[c.index] === undefined){
+                    gotoTable[c.index] = []
+                }
                 Object.keys(gotos).forEach(key => {
                     gotos[key].forEach(item => getCollection(item))
                     gotoTable[c.index][key] = getCollection(gotos[key][0]).index
@@ -94,7 +96,7 @@ const CC = (() => {
         }
         
         return Array.from(collections)
-    }
+    }    
 
     function getActions(cc){
         if (!actionTable[cc.index]){
