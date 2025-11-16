@@ -44,7 +44,6 @@ function  getNext(handle){
 function expandHandle( handle ){
   const rule = handle.getRule()
   const endSymbol = handle.getEnd()
-//	console.log(`${handle}`)
   const symbol = handle.getCurrentSymbol()
   if (Rules.isTerminal(symbol)){
     return []

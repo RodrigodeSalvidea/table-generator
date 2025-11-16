@@ -93,6 +93,8 @@ function initializeRules(rulesString){
    })
    
  }
+ 
+ 
 
 
   goalCandidates = symbols.filter(s => existsInLeft[s] && !existsInRight[s])
