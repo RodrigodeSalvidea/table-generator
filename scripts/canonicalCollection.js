@@ -1,77 +1,55 @@
+const SetFactory = (() => {
+  function makeSet(){
+    const set = {}
+    const handles = []
+    let processed =  false
+
+    set.markProcessed = () => { processed = true }
+    set.add = (handle) => { 
+      if (handles.every(h => !Handle.equals(h, handle))){
+        handles.push(handle) 
+      }
+    }
+    set.getHandles = () => Array.from(handles)
+    set.debug = () => {
+      console.log("[") 
+      handles.forEach(h => {console.log(`${h}`)})
+      console.log("]")
+    }
+    Object.freeze(set)
+    return set
+ 
+  }
+ 
+  return { makeSet }
+})()
+
+
+
+
+
+
 const CC = (() => {
-    const collections = []
+    const sets = []
     const setMap = [] // [rule][endSymbol][index]
     const actionTable = []
     const gotoTable = []
+    const cc = []
     let i = 0
-    
-    function findSubset(handles){
-      const derivedSet = [] //let derivedSet hold a)the handles passed as arguments and b)their unique expansions
-      const derivedSetMap = [] 
-      let allFound = true
-      handles.forEach(handle => {
-	const collection = Handle.findCanonicalCollection(handle)
 
-	collection.forEach(h => {
-	  if (derivedSetMap[h.getRule().getId()] === undefined) {
-	    derivedSetMap[h.getRule().getId()] = []
-	  }
-	  if (derivedSetMap[h.getRule().getId()][h.getEnd()] === undefined){
-	    derivedSetMap[h.getRule().getId()][h.getEnd()] = []
-	  }
-	  if (derivedSetMap[h.getRule().getId()][h.getEnd()][h.getIndex()] !== undefined){
-	  return 
-	  }
-	  derivedSetMap[h.getRule().getId()][h.getEnd()][h.getIndex()] = 1
-	  derivedSet.push(h)
+    function compute(entry){
+      cc.push(Handle.closure(entry))
 
-	  if (setMap[h.getRule().getId()] === undefined || setMap[h.getRule().getId()][h.getEnd()] === undefined || setMap[h.getRule().getId()][h.getEnd()][h.getIndex()] === undefined){
-	    allFound = false 
-	  }
-	
+      cc.forEach(collection => {
+        collection.markProcessed()
+        collection.getHandles().forEach(h => {
+          
 	})
-      })
 
-      
-     const currentGroup = GroupFactory.makeGroup().setIndex(collections.length)
-     let minIndex = collections.length 
-     derivedSet.forEach(h => {
-	if (setMap[h.getRule().getId() === undefined){
-	  setMap[h.getRule().getId()] = []
-	}
-	if (setMap[h.getRule().getId()][h.getEnd()] === undefined){
-	  setMap[h.getRule().getId()][h.getEnd()] = []
-	}
-	if (setMap[h.getRule().getId()][h.getEnd()][h.getIndex()] !== undefined){
-	   let node = setMap[h.getRule().getId()][h.getEnd()][h.getIndex()]  
-	   minIndex = Math.min(node.getIndex, minIndex)
-	   while(node.hasNext() && node.getIndex() !== collections.length){
-	     node = node.getNext()
-	   }
-	   if (node.getIndex() !== collections.length){
-	     node.setNext(currentGroup) 
-	   }
-	}else{
-          setMap[h.getRule().getId()][h.getEnd()][h.getIndex()] = currentGroup
-	}
+
       })
-      
-       
-       
     }
-    
-    
-    
-     
-   
-    return {
-      findCompleteCC,
-      getActionTable,
-      getGotoTable,
-      getCollections
-    }
+
+	      
+		  
 })()
-//class responsibilities: create and handle canonical collection objects. 
-//class should ensure that redundant ccs are not made. Redundant handle objects could exist
-//handle objects are defined by a rule, an index and an endsymbol, none of which should be redundant
-//handleMap will map each handle to an index in collections in this way

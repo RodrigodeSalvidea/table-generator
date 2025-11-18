@@ -71,8 +71,8 @@ function equals(handle1, handle2){
   handle1.getIndex() === handle2.getIndex() && 
   handle1.getEnd() === handle2.getEnd()) 
 }
-
-function findCanonicalCollection(handle){
+/*
+function closure(handle){
   const s = []
   let setIsChanging = true
   
@@ -99,13 +99,41 @@ function findCanonicalCollection(handle){
     })
   }	
   return s
+}*/
+function closure(s){
+  s = Array.from(s)
+ 
+  let sIsChanging = true 
+  while (sIsChanging){
+    let n = []
+    s.forEach(item => {
+      if (!item.hasNext()){
+	return
+      }
+      const expansions = expandHandle(item)
+      expansions.forEach(e => {
+	if (s.every(item => !equals(item, e)) && n.every(item => !equals(item, e))){
+	  n.push(e)
+	}
+      })
+    })
+
+    if (n.length === 0){
+      sIsChanging = false
+    }
+    n.forEach(expansion => {
+      s.push(expansion)
+    })
+   }
+  
+ return s
 }
 return {
   makeHandle,
   getNext,
   equals,
   expandHandle,
-  findCanonicalCollection
+  closure
 
 }
 
