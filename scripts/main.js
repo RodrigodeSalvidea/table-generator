@@ -8,10 +8,6 @@ submitButton.addEventListener('click', () => {
   const  rulesString = rulesArea.value
   Rules.initializeRules(rulesString)
   const entry = Handle.makeHandle(Rules.getExpansionRules(Rules.getGoal())[0], EOF, 0)
-  let cc0 = Handle.closure([entry])
-  cc0.forEach(item => console.log(`${item}`))
-  cc0 = Handle.closure(cc0)
-  cc0.forEach(item => console.log(`${item}`))
-  
-
+  CC.compute(entry) 
+  CC.debug()
 })
