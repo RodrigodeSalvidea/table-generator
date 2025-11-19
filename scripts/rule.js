@@ -132,6 +132,8 @@ function isTerminal(symbol){
     }
     throw new Error(`symbol ${symbol} is not registered as a symbol`)
 }
+function getNonTerminals() { return Object.keys(nonTerminalSymbols) }
+function getTerminals() {return Object.keys(terminalSymbols) }
 function getAllRules(){ return rulesList }
 
 return{ 
@@ -140,6 +142,8 @@ return{
     isTerminal,
     getFirst,
     getAllRules,
-    getGoal
+    getGoal,
+    getNonTerminals,
+    getTerminals
 }
 })()

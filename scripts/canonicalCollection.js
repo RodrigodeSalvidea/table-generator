@@ -88,12 +88,36 @@ const CC = (() => {
 	    gotoTable[i][symbol] = goToIndex
             return
 	  }
-           
+          goToIndex = cc.findIndex(e => e.equals(temp))
+	  gotoTable[i][symbol] = goToIndex
 	})
       }
+      
+      for(let i = 0; i < cc.length; i++){
+        const edges = cc[i].getEdges()
+	actionTable[i] = []
+	edges.forEach(symbol => {
+            actionTable[i][symbol] = {
+              action: "shift",
+	      state: gotoTable[i][symbol]
+	    }
+	})
+	cc[i].getHandles().forEach( item => {
+          if (!item.hasNext()){
+            actionTable[i][item.getEnd()] = {
+              action: "reduce",
+	      rule: item.getRule()
+	    }
+	  }
+	})
+      }
+
+     
     }
-    
-   return {compute, debug} 
+   function getActionTable(){ return actionTable }
+   function getGotoTable(){ return gotoTable }
+   function getStates(){ return cc }
+   return {compute, debug, getActionTable, getGotoTable, getStates} 
 	      
 		  
 })()
