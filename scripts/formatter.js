@@ -4,15 +4,14 @@ const Formatter = (()=> {
     // states do not need to be named
     // actionTable: table[state][token] = {action: , state: , rule: }
     // gotoTable: table[state][token] = state
-    let entryFunction = console.log
-    const rules = []
-    let actionTable = undefined
-    let gotoTable = undefined
+
+    
     
     function getTypes(){
 
     }
-    function getMacros(){
+    function getMacros(cc){
+        
 
     }
     function formatActionTable(cc, rules){
@@ -28,7 +27,7 @@ const Formatter = (()=> {
                if(actionTable[state][terminals[i]] === undefined){
                     actionTableString += "UNDEFINED"
                } else {
-                    actionTableString += `${actionTable[state][terminals[i]].action} | ${actionTable[state][terminals[i]].rule !== undefined ? actionTable[state][terminals[i]].rule.getId() : actionTable[state][terminals[i]].state}`
+                    actionTableString += `${actionTable[state][terminals[i]].action.toUpperCase()} | ${actionTable[state][terminals[i]].rule !== undefined ? actionTable[state][terminals[i]].rule.getId() : actionTable[state][terminals[i]].state}`
                }
                if (i < terminals.length - 1){
                 actionTableString+= ", "
@@ -46,14 +45,37 @@ const Formatter = (()=> {
         
         return actionTableString
     }
-    function formatGotoTable(cc){
+    function formatGotoTable(cc, rules){
+        const gotoTable = cc.getGotoTable()
+        const nonTerminals = rules.getNonTerminals()
+
+
+        let gotoTableString = "{ "
+
+        for(let state = 0; state < gotoTable.length; state++){
+            gotoTableString += " { "
+            for(let i = 0; i < nonTerminals.length; i++){
+                gotoTableString += gotoTable[state][nonTerminals[i]] === undefined ? "UNDEFINED" : String(gotoTable[state][nonTerminals[i]])
+            
+                if (i < nonTerminals.length - 1){
+                    gotoTableString += ", "
+                }
+            }
+            gotoTableString+= "}"
+            if (state < gotoTable.length - 1){
+                gotoTableString += ", "
+            }
+
+        }
+        gotoTableString+= "}"
+
+
+        return gotoTableString
 
     }
 
 
-    function setEntryFunc(f){
-        entryFunction = f
-    }
+    
     
     
 
@@ -65,7 +87,7 @@ const Formatter = (()=> {
         getMacros,
         formatActionTable,
         formatGotoTable,
-        setEntryFunc
+        
 
     }
     Object.freeze(returnObj)

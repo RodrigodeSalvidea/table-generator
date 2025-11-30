@@ -94,4 +94,5 @@ submitButton.addEventListener('click', () => {
   })
 
   console.log(Formatter.formatActionTable(CC, Rules))
+  console.log(Formatter.formatGotoTable(CC, Rules))
 })
