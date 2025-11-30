@@ -20,11 +20,14 @@ function makeRuleObject(ruleString){
     function getRightSide(){ return rightSide } //Right Side is an array
     function getLeftSide(){ return leftSide } //Left side is a string
     function getId(){return id} 
-
+    function toString(){
+      return ruleString
+    }
     return {
         getLeftSide,
         getRightSide,
-        getId
+        getId,
+        toString
     } 
 }
 

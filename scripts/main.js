@@ -4,7 +4,7 @@ const submitButton = document.querySelector('#submit-grammar-button')
 const statesDisplay = document.querySelector('#states-table')
 const actionDisplay = document.querySelector('#action-table')
 const gotoDisplay = document.querySelector('#goto-table')
-
+const rulesTable = document.querySelector('#rules-table')
 submitButton.addEventListener('click', () => {
   const  rulesString = rulesArea.value
   Rules.initializeRules(rulesString)
@@ -79,4 +79,19 @@ submitButton.addEventListener('click', () => {
     gotoDisplay.appendChild(row)
   
   }
+  
+  Rules.getAllRules().forEach(rule => {
+    const labelCell = document.createElement('td')
+    const contentCell = document.createElement('td')
+    const row = document.createElement('tr')
+
+    labelCell.textContent = String(rule.getId())
+    contentCell.textContent = rule.toString()
+    row.appendChild(labelCell)
+    row.appendChild(contentCell)
+    rulesTable.appendChild(row)
+
+  })
+
+  console.log(Formatter.formatActionTable(CC, Rules))
 })
