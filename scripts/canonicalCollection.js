@@ -92,25 +92,27 @@ const CC = (() => {
 	  gotoTable[i][symbol] = goToIndex
 	})
       }
+      const goalSymbol = Rules.getGoal()
       
       for(let i = 0; i < cc.length; i++){
         const edges = cc[i].getEdges()
-	actionTable[i] = []
-	edges.forEach(symbol => {
+	       actionTable[i] = []
+	       edges.forEach(symbol => {
             actionTable[i][symbol] = {
               action: "shift",
-	      state: gotoTable[i][symbol]
+	            state: gotoTable[i][symbol]
 	    }
 	})
 	cc[i].getHandles().forEach( item => {
           if (!item.hasNext()){
             actionTable[i][item.getEnd()] = {
-              action: "reduce",
-	      rule: item.getRule()
+              action: item.getRule().getLeftSide() === goalSymbol ? "accept" : "reduce",
+	            rule: item.getRule()
 	    }
 	  }
 	})
       }
+  
 
      
     }

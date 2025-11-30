@@ -133,7 +133,11 @@ function isTerminal(symbol){
     throw new Error(`symbol ${symbol} is not registered as a symbol`)
 }
 function getNonTerminals() { return Object.keys(nonTerminalSymbols) }
-function getTerminals() {return Object.keys(terminalSymbols) }
+function getTerminals() {
+  const terminals =  Object.keys(terminalSymbols) 
+  terminals.push(EOF)
+  return terminals
+}
 function getAllRules(){ return rulesList }
 
 return{ 
