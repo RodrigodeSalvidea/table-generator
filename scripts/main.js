@@ -5,7 +5,10 @@ const statesDisplay = document.querySelector('#states-table')
 const actionDisplay = document.querySelector('#action-table')
 const gotoDisplay = document.querySelector('#goto-table')
 const rulesTable = document.querySelector('#rules-table')
-submitButton.addEventListener('click', () => {
+const declarations = document.querySelector('#declarations')
+const formatOutputButton = document.querySelector('#format-output-button')
+
+const submitRules =  (() => {
   const  rulesString = rulesArea.value
   Rules.initializeRules(rulesString)
   const entry = Handle.makeHandle(Rules.getExpansionRules(Rules.getGoal())[0], EOF, 0)
@@ -33,9 +36,9 @@ submitButton.addEventListener('click', () => {
 
   const terminals = Rules.getTerminals()
   const head = document.createElement('tr')
-  head.appendChild(document.createElement('td'))
+  head.appendChild(document.createElement('th'))
   terminals.forEach(symbol => {
-    const cell = document.createElement('td')
+    const cell = document.createElement('th')
     cell.textContent = symbol
     head.appendChild(cell)
   })
@@ -52,7 +55,7 @@ submitButton.addEventListener('click', () => {
 	row.appendChild(cell)
 	return
       }
-      cell.textContent = `[ ${at[i][symbol].action} , ${at[i][symbol].action === "shift" ? at[i][symbol].state : at[i][symbol].rule.getId() }]`
+      cell.textContent = ` ${at[i][symbol].action}  ${at[i][symbol].action === "shift" ? at[i][symbol].state : at[i][symbol].rule.getId() }`
       row.appendChild(cell)
     })
     actionDisplay.appendChild(row)
@@ -61,7 +64,7 @@ submitButton.addEventListener('click', () => {
   const gotoHead = document.createElement('tr')
   gotoHead.appendChild(document.createElement('td'))
   nonTerminals.forEach(nt => {
-    const cell = document.createElement('td')
+    const cell = document.createElement('th')
     cell.textContent = nt
     gotoHead.appendChild(cell)
   })
@@ -92,7 +95,54 @@ submitButton.addEventListener('click', () => {
     rulesTable.appendChild(row)
 
   })
+  document.querySelectorAll('table').forEach(table => table.style.display="table")
 
-  console.log(Formatter.formatActionTable(CC, Rules))
-  console.log(Formatter.formatGotoTable(CC, Rules))
+
+
+ formatOutputButton.addEventListener('click', formatOutput)
+ submitButton.removeEventListener('click', submitRules)
 })
+submitButton.addEventListener('click', submitRules)
+
+  const  formatOutput = () =>{
+    const numStates = CC.getStates().length
+  
+
+
+    const actionTypeDecl = `typedef unsigned int Action;`
+    const parserStateDecl = 'typedef unsigned int ParserState;'
+    const reduceDecl = '#define REDUCE 0x00000000'
+    const shiftDecl =  '#define SHIFT  0x80000000' 
+    const acceptDecl = '#define  ACCEPT 0x40000000'
+    const undefinedDecl = `#define UNDEFINED 0xffffffff`
+    const ruleTableDecl = `int ruleSizes[${Rules.getAllRules().length}] = ${Formatter.formatRuleSizes(Rules)};`
+    const actionTableDecl = `Action actionTable[${numStates}][${Rules.getTerminals().length}] = ${Formatter.formatActionTable(CC, Rules)};` 
+    const gotoTableDecl = `ParserState gotoTable[${numStates}][${Rules.getNonTerminals().length}] = ${Formatter.formatGotoTable(CC, Rules)};`
+    const nonTerminalsDecl = `${Formatter.formatNonTerminals(Rules)};`
+    
+
+  
+    Array.from([
+      reduceDecl,
+      shiftDecl,
+      acceptDecl,
+      nonTerminalsDecl,
+      actionTypeDecl, 
+      parserStateDecl,
+      ruleTableDecl,
+      actionTableDecl,
+      gotoTableDecl
+    ]).forEach( decl =>{ 
+      const line = document.createElement('span')
+      line.textContent = decl
+      declarations.appendChild(document.createElement('br'))
+      declarations.appendChild(line)
+    })
+    document.querySelector('pre').style.display = "block" 
+    formatOutputButton.removeEventListener('click',formatOutput)
+    
+  }
+ 
+
+
+

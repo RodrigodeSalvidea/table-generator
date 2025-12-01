@@ -11,7 +11,7 @@ const Formatter = (()=> {
 
     }
     function getMacros(cc){
-        
+
 
     }
     function formatActionTable(cc, rules){
@@ -74,6 +74,26 @@ const Formatter = (()=> {
 
     }
 
+    
+    function formatNonTerminals(rules){
+        let nonTerminalsString = "enum NonTerminal{\n"
+        const nonTerminals = rules.getNonTerminals()
+        for(let i = 0; i < nonTerminals.length; i++){
+            nonTerminalsString+= "\t" + nonTerminals[i]
+            if (i < nonTerminals.length - 1){
+                nonTerminalsString+= ","
+            }
+            nonTerminalsString+= "\n"
+        }
+        nonTerminalsString+= "}"
+        return nonTerminalsString
+    }
+
+    function formatRuleSizes(rules){
+        return `{${rules.getAllRules().map(rule => rule.getRightSide().length).join(", ")}}`
+
+    }
+
 
     
     
@@ -87,7 +107,8 @@ const Formatter = (()=> {
         getMacros,
         formatActionTable,
         formatGotoTable,
-        
+        formatNonTerminals,
+        formatRuleSizes
 
     }
     Object.freeze(returnObj)

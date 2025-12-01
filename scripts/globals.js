@@ -1,2 +1,2 @@
 const EMPTY = ""
-const EOF = -1
+const EOF = "$"

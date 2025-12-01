@@ -1,0 +1,22 @@
+table{
+    border: 4px solid black;
+    display: none;
+}
+td{
+    border: 2px solid black;
+}
+
+ul li{
+    list-style-type: none;
+}
+pre {
+	color: white;
+	font-weight: 200;
+	background-color: black;
+	display: none;
+	padding: 16px;
+ 	text-wrap: wrap;	
+	font-family: 'Courier New', Consolas, 'Lucida Console', 'Source Code Pro', 'DejaVu Sans Mono', 'Roboto Mono', 'Ubuntu Mono', 'Monospace Regular', monospace;
+}
+
+
