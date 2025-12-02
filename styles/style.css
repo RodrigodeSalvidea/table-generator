@@ -1,6 +1,20 @@
+html,body{
+	font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, Adwaita Sans, Cantarell, Ubuntu, roboto, noto, helvetica, arial, sans-serif;
+}
+body{
+	padding-bottom: 128px;
+	background-color: #c4bcbc;
+}
+thead td{
+	border: none;
+}
+header{
+	text-align: center;
+}
 table{
     border: 4px solid black;
     display: none;
+    margin: 0 auto;
 }
 td{
     border: 2px solid black;
@@ -9,14 +23,64 @@ td{
 ul li{
     list-style-type: none;
 }
+textarea{
+	resize: vertical;
+	background-color: #ebe1e1;
+}
+ul{
+	padding: 0px;
+	margin: 0px;
+}
 pre {
 	color: white;
 	font-weight: 200;
-	background-color: black;
-	display: none;
+	background-color: #0b1142;
 	padding: 16px;
  	text-wrap: wrap;	
 	font-family: 'Courier New', Consolas, 'Lucida Console', 'Source Code Pro', 'DejaVu Sans Mono', 'Roboto Mono', 'Ubuntu Mono', 'Monospace Regular', monospace;
+	width: 1000px;
+	margin: 64px auto;
 }
+main{
+	display: none;
+	grid-template-columns: repeat(2, minmax(auto, 500px));
+	grid-template-rows: repeat(2, minmax(auto, 800px));
+	grid-template-areas:
+	"nw ne"
+	"sw se";
+	gap: 32px;
+	background-color: #F0FFF0;
+	width: 1000px;
+	margin: 0 auto;
+}
+caption{
+	text-wrap: wrap;
+}
+.rules-input-block{
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 
-
+}
+.section{
+	overflow: scroll;
+	justify-content: start;
+	min-width: 0;
+	white-space: nowrap;
+	padding: 64px;
+}
+.rules-table-block{
+	grid-area: nw;
+}
+.states-table-block{
+	grid-area: ne
+}
+.goto-table-block{
+	grid-area: sw;
+}
+.action-table-block{
+	grid-area: se;
+}
+.generated-code-block{
+	display: none;
+}

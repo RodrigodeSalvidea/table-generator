@@ -7,9 +7,11 @@ const gotoDisplay = document.querySelector('#goto-table')
 const rulesTable = document.querySelector('#rules-table')
 const declarations = document.querySelector('#declarations')
 const formatOutputButton = document.querySelector('#format-output-button')
-
+const copyCodeButton = document.querySelector('#copy-code-button')
 const submitRules =  (() => {
   const  rulesString = rulesArea.value
+  if (rulesString.trim() === '')
+	return
   Rules.initializeRules(rulesString)
   const entry = Handle.makeHandle(Rules.getExpansionRules(Rules.getGoal())[0], EOF, 0)
   CC.compute(entry) 
@@ -68,7 +70,9 @@ const submitRules =  (() => {
     cell.textContent = nt
     gotoHead.appendChild(cell)
   })
-  gotoDisplay.appendChild(gotoHead)
+  const gotoHeadElement = document.createElement('thead')
+  gotoHeadElement.appendChild(gotoHead) 
+  gotoDisplay.appendChild(gotoHeadElement)
   for (let i = 0; i < at.length; i++){
     const row = document.createElement('tr')
     const labelCell = document.createElement('td')
@@ -96,12 +100,17 @@ const submitRules =  (() => {
 
   })
   document.querySelectorAll('table').forEach(table => table.style.display="table")
+  document.querySelector('main').style.display = "grid"
 
 
 
  formatOutputButton.addEventListener('click', formatOutput)
  submitButton.removeEventListener('click', submitRules)
 })
+const writeCodeToClipBoard = () => {
+	navigator.clipboard.writeText(declarations.innerText)
+	//.catch(() => console.log('error copying to clipboard'))
+}
 submitButton.addEventListener('click', submitRules)
 
   const  formatOutput = () =>{
@@ -126,6 +135,7 @@ submitButton.addEventListener('click', submitRules)
       reduceDecl,
       shiftDecl,
       acceptDecl,
+      undefinedDecl,
       nonTerminalsDecl,
       actionTypeDecl, 
       parserStateDecl,
@@ -138,11 +148,10 @@ submitButton.addEventListener('click', submitRules)
       declarations.appendChild(document.createElement('br'))
       declarations.appendChild(line)
     })
-    document.querySelector('pre').style.display = "block" 
     formatOutputButton.removeEventListener('click',formatOutput)
-    
+    document.querySelector('.generated-code-block').style.display = "block";
+    copyCodeButton.addEventListener('click', writeCodeToClipBoard)
   }
  
-
 
 

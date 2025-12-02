@@ -16,49 +16,62 @@
 </head>
 <body>
     <header>
-    this will be a table generation website.
-
-    For now, I will mostly use this as a platform to test the functions and algorithms
+    <h1> Table Generator </h1>
+    <p>  This Website Generates tables for LR(1) Parsers</p>
     <div class = "button-bar">
-    <button id = "format-output-button">Format output</button>
+    <button id = "format-output-button"> generate code</button>
     <button id='submit-grammar-button'> Begin</button>
+    <button id='copy-code-button'>Copy Code to clipboard</button>
     </div>
+    <h2>input rules</h2>
+    <ul class='rules-list'>
+	    <li>Rules should be separated by one or more line.</li>
+	    <li>All symbols on the right-hand side should be separated by one or more spaces</li>
+	    <li>A '-&gt' should separate the left hand side from the right hand side </li>
+	    <li>The left hand side should contain only one symbol</li>
+	    <li>The right hand side should contain at least one symbol</li>
+	    <li>The grammar should contain exactly one <em>goal symbol</em></li> 
+	    <li>The <em>goal symbol</em> should appear in exactly one rule, on the left hand side</li>
+	    <li>To express a nonterminal symbol that has multiple expansion rules, write the rules <em> seperately </em> </li>
+	    
+
+    </ul>
     </header>
-     <label>Enter the expansion rules for yout grammar here</label>
+
+    <div class="rules-input-block">
+    <label>Enter the expansion rules for your grammar here</label> 
     <textarea id = 'cfg-rules'> 
-
-
+	    
     </textarea>
-  
+    </div>
+
+    <main>
+        <div class = 'rules-table-block section'> 
     <table id='rules-table'>
     <caption>Rules</caption>
-
     </table>
+    </div>
 
-   
+    <div class = 'states-table-block section'> 
     <table id='states-table'>
     <caption>States and their representative LR(1) Items </caption>
-    
-
     </table>
+    </div>
 
-
-
+    <div class='goto-table-block section'>
     <table id='goto-table'>
     <caption>Goto Table</caption>
     </table>
-    
+    </div>
 
-
+    <div class='action-table-block section'>
     <table id='action-table'>
     <caption>Action Table</caption>
     </table>
+    </div>
 
-    <pre><code id = "declarations">
-      
+    </main>
 
-    </code>
-    </pre>
-    
+    <div class='generated-code-block section'><pre><code id = "declarations"></code></pre></div>
 </body>
 </html>

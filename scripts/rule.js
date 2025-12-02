@@ -11,7 +11,7 @@ const Rules = (() => {
 function makeRuleObject(ruleString){
     const tokens = ruleString.trim(" ").split(/\s+/)
     if (tokens.length < 3 || tokens[1] !== '->'){
-      return undefined
+	    throw new Error(`Rule String ${ruleString} is not a valid ruleString`)
     }
     const leftSide = tokens[0]
     const rightSide = tokens.splice(2)
@@ -32,7 +32,7 @@ function makeRuleObject(ruleString){
 }
 
 function initializeRules(rulesString){
-   const ruleStrings = rulesString.split(/\n+/)
+   const ruleStrings = rulesString.trim().split(/\n+/)
    const existsInLeft = []
    const existsInRight = []
    rulesList = ruleStrings.map(rule => makeRuleObject(rule)).filter(rule => rule)
