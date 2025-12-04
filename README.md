@@ -16,16 +16,27 @@ This demo website is a table generator for a larger compiler project. Given an i
 
 # Sample Inputs:
 
+Sheep-noise:
 ```
 Goal -> SheepNoise
 SheepNoise -> SheepNoise baa
 SheepNoise -> baa
 ```
-
+Parenthesis
 ```
 Goal -> ParenList
 ParenList -> ParenList Parens
 ParenList -> Parens
 Parens -> ( ParenList )
 Parens -> ( )
+```
+Postorder arithmetic:
+```
+Goal -> Expr
+Expr -> Expr Expr Op
+Expr -> num
+Op -> +
+Op -> -
+Op -> /
+Op -> %
 ```
