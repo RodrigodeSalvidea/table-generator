@@ -1,4 +1,27 @@
 ConflictRecorder = (() => {
+	const makeConflict = () => {
+		const conflict = {}
+		const actions = []
+		let state = undefined
+		let symbol = undefined
+		conflict.setState = (s) => {state = s}
+		conflict.setSymbol = (s) => {symbol = s}
+		conflict.addAction = (action) => { actions.push(action) }
+		conflict.getMessage = () => {
+			let message = `Conflict at state ${state} and symbol ${symbol}.`
+			actions.forEach(action => {
+				if (action.action === "shift"){
+					message+= `shift ${action.state}.`
+				} else{
+					message+= `reduce ${action.state}.`
+				}
+			}
+			return message
+		}
+		Object.freeze(conflict)
+		return conflict
+	}
+
 	const conflictsList = []
 	const conflictsMap = []
 	const conflictRecorder = {}
@@ -21,6 +44,6 @@ ConflictRecorder = (() => {
 		conflict.addAction(newAction)
 	}
 	conflictRecorder.getConflicts = () => conflictsList
-	conflictRecorder.freeze()
+	Object.freeze(conflictRecorder)
 	return conflictRecorder
 })()
