@@ -8,6 +8,8 @@ const rulesTable = document.querySelector('#rules-table')
 const declarations = document.querySelector('#declarations')
 const formatOutputButton = document.querySelector('#format-output-button')
 const copyCodeButton = document.querySelector('#copy-code-button')
+const terminalSymbolsList = document.querySelector('#terminal-symbols-list')
+const nonTerminalSymbolsList = document.querySelector('#non-terminal-symbols-list')
 const submitRules =  (() => {
   const  rulesString = rulesArea.value
   if (rulesString.trim() === '')
@@ -101,8 +103,17 @@ const submitRules =  (() => {
   })
   document.querySelectorAll('table').forEach(table => table.style.display="table")
   document.querySelector('main').style.display = "grid"
-
-
+  terminals.forEach(symbol => {
+	  const li = document.createElement('li')
+	  li.textContent = symbol
+	  terminalSymbolsList.appendChild(li)
+  })
+  nonTerminals.forEach(symbol => {
+	  const li = document.createElement('li')
+	  li.textContent = symbol
+	  nonTerminalSymbolsList.appendChild(li)
+  })
+  
 
  formatOutputButton.addEventListener('click', formatOutput)
  submitButton.removeEventListener('click', submitRules)

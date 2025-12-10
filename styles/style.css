@@ -44,8 +44,9 @@ pre {
 main{
 	display: none;
 	grid-template-columns: repeat(2, minmax(auto, 500px));
-	grid-template-rows: repeat(2, minmax(auto, 800px));
+	grid-template-rows: repeat(3, minmax(auto, 800px));
 	grid-template-areas:
+	"nn nn"
 	"nw ne"
 	"sw se";
 	gap: 32px;
@@ -68,6 +69,9 @@ caption{
 	min-width: 0;
 	white-space: nowrap;
 	padding: 64px;
+}
+.symbols-list{
+	grid-area: nn
 }
 .rules-table-block{
 	grid-area: nw;
