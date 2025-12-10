@@ -15,8 +15,14 @@ ConflictRecorder = (() => {
 				} else{
 					message+= `reduce ${action.state}.`
 				}
-			}
+			})
 			return message
+		}
+		conflict.debug = () => {
+		console.log(`Conflict detected at state ${state}, symbol ${symbol}`)
+		actions.forEach(action => console.log(action))
+
+
 		}
 		Object.freeze(conflict)
 		return conflict
@@ -44,6 +50,10 @@ ConflictRecorder = (() => {
 		conflict.addAction(newAction)
 	}
 	conflictRecorder.getConflicts = () => conflictsList
+	conflictRecorder.debug = () => {
+		conflictsList.forEach(conflict => conflict.debug())
+	}
+	
 	Object.freeze(conflictRecorder)
 	return conflictRecorder
 })()
