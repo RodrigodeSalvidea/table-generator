@@ -18,8 +18,11 @@ const rerenderActionTableButton = document.querySelector('#rerender-action-table
 
 
 const registerConflicts = (cc) => {
-	
+		
 	const conflicts = ConflictRecorder.getConflicts()
+	const doneButton = document.createElement('button')
+	doneButton.textContent = "Done"
+	doneButton.addEventListener('click', () => conflictDialog.close())
 	conflicts.forEach(conflict => {
 		const section = document.createElement('div')
 		section.classList = 'conflict-box'
@@ -28,7 +31,6 @@ const registerConflicts = (cc) => {
 		const header = document.createElement('h2')
 		header.textContent = headerText
 		const optionsBar = document.createElement('div')
-		
 		candidateActions.forEach( action => {
 			const optionBox = document.createElement('div')
 			optionBox.classList = 'action-option-box'
@@ -54,6 +56,7 @@ const registerConflicts = (cc) => {
 		section.appendChild(optionsBar)
 		conflictDialog.appendChild(section)
 	})
+	conflictDialog.appendChild(doneButton)
 }
 
 
@@ -216,6 +219,7 @@ const submitRules =  (() => {
   	  viewConflictsButton.addEventListener('click', () => conflictDialog.showModal())
   	  viewConflictsButton.classList.toggle('inactive', false)
   }
+  
   formatOutputButton.classList.toggle('inactive', false)
   
 })

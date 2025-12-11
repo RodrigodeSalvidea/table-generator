@@ -44,7 +44,7 @@ pre {
 main{
 	display: none;
 	grid-template-columns: repeat(2, minmax(auto, 500px));
-	grid-template-rows: repeat(3, minmax(auto, 800px));
+	grid-template-rows: min-content repeat(2, minmax(auto, 800px));
 	grid-template-areas:
 	"nn nn"
 	"nw ne"
@@ -77,7 +77,7 @@ caption{
 	grid-area: nw;
 }
 .states-table-block{
-	grid-area: ne
+	grid-area: ne;
 }
 .goto-table-block{
 	grid-area: sw;
@@ -88,4 +88,13 @@ caption{
 .generated-code-block{
 	display: none;
 }
-
+.rules-input-block{
+	max-width: 1000px;
+	margin: 16px auto;
+}
+.rules-list{
+	text-align: left;
+	width: fit-content;
+	margin: 0 auto;
+	line-height: 1.5;
+}

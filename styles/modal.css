@@ -1,0 +1,21 @@
+.conflict-box, dialog > h1{
+  margin: 16px;
+  text-align: left;
+  
+}
+dialog{
+  text-align: right;
+}
+dialog > button{
+  background-color: var(--unpressed-button-color);
+}
+dialog > button:hover{
+  background-color: var(--hovered-button-color);
+}
+dialog > button:active{
+  background-color: var(--active-button-color);
+  color: #fff;
+  border-color: #fff;
+}
+
+
