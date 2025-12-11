@@ -1,0 +1,55 @@
+
+:root{
+	--unpressed-button-color: #fff;
+	--inactive-button-color: #ddd;
+	--hovered-button-color: #0f0;
+	--active-button-color: #000;
+}
+
+.button-bar{
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 32px 1fr 1fr;
+	grid-template-areas: 
+	"begin begin"
+	"generate view"
+	"copy rerender";
+	max-width: 600px;
+	gap: 4px;
+	margin: 0 auto;
+	text-transform: capitalize;
+}
+
+#copy-code-button{
+	grid-area: copy;
+}
+#format-output-button{
+	grid-area: generate;
+}
+#view-conflicts-button{
+	grid-area: view;
+}
+#rerender-action-table-button{
+	grid-area: rerender;
+}
+
+.button-bar button{
+	grid-area: begin;	
+	background-color: var(--unpressed-button-color);
+	border: 4px solid black;
+	border-radius: 4px;
+	font-weight: bold;
+}
+.button-bar button:hover{
+	background-color: var(--hovered-button-color);
+}
+.button-bar button:active{
+	background-color: var(--active-button-color);
+	color: #fff;
+	border-color: white
+}
+.button-bar button.inactive{
+	background-color: var(--inactive-button-color);
+	color: black;
+	border-color: black;
+}

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+    
     <link rel="stylesheet" href="./styles/style.css">
+    <link rel="stylesheet" href="./styles/button-bar.css">
     <script src = "./scripts/globals.js" defer></script>
     <script src = "./scripts/rule.js" defer></script>
     <script src = "./scripts/handle.js" defer></script>
@@ -25,11 +27,11 @@
     <h1> Table Generator </h1>
     <p>  This Website Generates tables for LR(1) Parsers</p>
     <div class = "button-bar">
-    <button id = "format-output-button"> generate code</button>
-    <button id='submit-grammar-button'> Begin</button>
-    <button id='copy-code-button'>Copy Code to clipboard</button>
-    <button id='view-conflicts-button'>View Conflicts</button>
-    <button id='rerender-action-table-button'>Rerender Action Table</button>
+    <button id = "format-output-button" class="inactive">Generate Code</button>
+    <button id='submit-grammar-button'>Begin</button>
+    <button id='copy-code-button' class="inactive">Copy Code to clipboard</button>
+    <button id='view-conflicts-button' class="inactive">View Conflicts</button>
+    <button id='rerender-action-table-button' class="inactive">Rerender Action Table</button>
     
     </div>
     <h2>input rules</h2>

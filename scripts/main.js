@@ -16,7 +16,6 @@ const rerenderActionTableButton = document.querySelector('#rerender-action-table
 
 
 
-rerenderActionTableButton.addEventListener('click', () => rerenderActionTable())
 
 const registerConflicts = (cc) => {
 	
@@ -41,6 +40,11 @@ const registerConflicts = (cc) => {
 			const symbol = conflict.getSymbol()
 			button.addEventListener('click', () => {
 				cc.changeAction(state, symbol, action)				
+				rerenderActionTableButton.addEventListener('click', rerenderActionTable)
+				rerenderActionTableButton.classList.toggle('inactive', false)
+				formatOutputButton.removeEventListener('click', formatOutput)
+				formatOutputButton.addEventListener('click', formatOutput)
+				formatOutputButton.classList.toggle('inactive', false)
 			})
 			optionBox.appendChild(optionHeader)
 			optionBox.appendChild(button)
@@ -123,6 +127,8 @@ function fillActionTable(cc, rules){
     })
     actionDisplay.appendChild(row)
   }
+
+  rerenderActionTableButton.classList.toggle('inactive', true)
 }
 function fillGotoTable(cc, rules){
   const at = cc.getActionTable()
@@ -204,8 +210,14 @@ const submitRules =  (() => {
 	
   formatOutputButton.addEventListener('click', formatOutput  )
   submitButton.removeEventListener('click', submitRules)
-  registerConflicts(CC) 
-  viewConflictsButton.addEventListener('click', () => conflictDialog.showModal())
+  submitButton.classList.toggle('inactive', true)
+  if (ConflictRecorder.getConflicts().length > 0 ){
+	  registerConflicts(CC) 
+  	  viewConflictsButton.addEventListener('click', () => conflictDialog.showModal())
+  	  viewConflictsButton.classList.toggle('inactive', false)
+  }
+  formatOutputButton.classList.toggle('inactive', false)
+  
 })
 
 const rerenderActionTable = (() => {
@@ -258,6 +270,9 @@ submitButton.addEventListener('click', submitRules)
     //formatOutputButton.removeEventListener('click',formatOutput)
     document.querySelector('.generated-code-block').style.display = "block";
     copyCodeButton.addEventListener('click', writeCodeToClipBoard)
+    copyCodeButton.classList.toggle('inactive', false)
+    formatOutputButton.classList.toggle('inactive', true)
+    formatOutputButton.removeEventListener('click', formatOutput)
   }
  
 
