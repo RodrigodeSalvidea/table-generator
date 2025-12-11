@@ -40,3 +40,6 @@ Op -> -
 Op -> /
 Op -> %
 ```
+
+# Conflicts
+If the parser generater encounters a conflict in a grammar, they will appear in the conflicts modal, which can be accessec through the view conflicts button. To apply an available action, simply click the apply button under that action in the modal. For some clarity as to what the action is, it is best to review the action table. You can rerender the action table after changing an action by clicking the rerender action table button. 
