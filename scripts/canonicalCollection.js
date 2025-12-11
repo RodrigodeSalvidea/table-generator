@@ -106,7 +106,7 @@ const CC = (() => {
 	cc[i].getHandles().forEach( item => {
           if (!item.hasNext()){
 	    if (actionTable[i][item.getEnd()] !== undefined){
-	      ConflictRecorder.recordConflict(i, symbol, {
+	      ConflictRecorder.recordConflict(i, item.getEnd(), {
               action: item.getRule().getLeftSide() === goalSymbol ? "accept" : "reduce",
 	      rule: item.getRule()
 	      }, actionTable[i][item.getEnd()])
@@ -125,7 +125,10 @@ const CC = (() => {
    function getActionTable(){ return actionTable }
    function getGotoTable(){ return gotoTable }
    function getStates(){ return cc }
-   return {compute, debug, getActionTable, getGotoTable, getStates} 
+   function changeAction(set, symbol, action){
+	   actionTable[set][symbol] = action
+   }
+   return {compute, debug, getActionTable, getGotoTable, getStates, changeAction} 
 	      
 		  
 })()

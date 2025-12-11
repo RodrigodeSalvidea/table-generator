@@ -7,6 +7,7 @@ ConflictRecorder = (() => {
 		conflict.setState = (s) => {state = s}
 		conflict.setSymbol = (s) => {symbol = s}
 		conflict.addAction = (action) => { actions.push(action) }
+		
 		conflict.getMessage = () => {
 			let message = `Conflict at state ${state} and symbol ${symbol}.`
 			actions.forEach(action => {
@@ -18,6 +19,9 @@ ConflictRecorder = (() => {
 			})
 			return message
 		}
+		conflict.getActions = () => Array.from(actions)
+		conflict.getState = () => state
+		conflict.getSymbol = () => symbol
 		conflict.debug = () => {
 		console.log(`Conflict detected at state ${state}, symbol ${symbol}`)
 		actions.forEach(action => console.log(action))
@@ -46,7 +50,7 @@ ConflictRecorder = (() => {
 			conflictsMap[state][symbol] = conflict
 			return
 		}
-		const conflict = conflictMap[state][symbol]
+		const conflict = conflictsMap[state][symbol]
 		conflict.addAction(newAction)
 	}
 	conflictRecorder.getConflicts = () => conflictsList

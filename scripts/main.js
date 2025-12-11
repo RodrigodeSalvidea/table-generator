@@ -10,14 +10,51 @@ const formatOutputButton = document.querySelector('#format-output-button')
 const copyCodeButton = document.querySelector('#copy-code-button')
 const terminalSymbolsList = document.querySelector('#terminal-symbols-list')
 const nonTerminalSymbolsList = document.querySelector('#non-terminal-symbols-list')
-const submitRules =  (() => {
-  const  rulesString = rulesArea.value
-  if (rulesString.trim() === '')
-	return
-  Rules.initializeRules(rulesString)
-  const entry = Handle.makeHandle(Rules.getExpansionRules(Rules.getGoal())[0], EOF, 0)
-  CC.compute(entry) 
-  let i = -1
+const conflictDialog = document.querySelector('#conflicts-dialog')
+const viewConflictsButton = document.querySelector('#view-conflicts-button')
+const rerenderActionTableButton = document.querySelector('#rerender-action-table-button')
+
+
+
+rerenderActionTableButton.addEventListener('click', () => rerenderActionTable())
+
+const registerConflicts = (cc) => {
+	
+	const conflicts = ConflictRecorder.getConflicts()
+	conflicts.forEach(conflict => {
+		const section = document.createElement('div')
+		section.classList = 'conflict-box'
+		const candidateActions = conflict.getActions()
+		const headerText = `State ${conflict.getState()} symbol ${conflict.getSymbol()}`
+		const header = document.createElement('h2')
+		header.textContent = headerText
+		const optionsBar = document.createElement('div')
+		
+		candidateActions.forEach( action => {
+			const optionBox = document.createElement('div')
+			optionBox.classList = 'action-option-box'
+			const optionHeader = document.createElement('h3')
+			optionHeader.textContent = `${ action.action } ${action.rule === undefined ? action.state : action.rule.getId()}`
+			const button = document.createElement('button')
+			button.textContent = 'apply'
+			const state = conflict.getState()
+			const symbol = conflict.getSymbol()
+			button.addEventListener('click', () => {
+				cc.changeAction(state, symbol, action)				
+			})
+			optionBox.appendChild(optionHeader)
+			optionBox.appendChild(button)
+			optionsBar.appendChild(optionBox)
+		})
+		section.appendChild(header)
+		section.appendChild(optionsBar)
+		conflictDialog.appendChild(section)
+	})
+}
+
+
+function fillStatesTable(cc){
+ let i = -1
   CC.getStates().forEach(state => {
     const ul = document.createElement('ul')
     const labelCell = document.createElement('td')
@@ -35,10 +72,32 @@ const submitRules =  (() => {
     row.append(contentCell)
     statesDisplay.append(row)
   })
-  const at = CC.getActionTable()
-  const gt = CC.getGotoTable()
+}
 
-  const terminals = Rules.getTerminals()
+function fillSymbolsList(rules){
+const terminals = rules.getTerminals()
+const nonTerminals = rules.getNonTerminals()
+terminals.forEach(symbol => {
+	  const li = document.createElement('li')
+	  li.textContent = symbol
+	  terminalSymbolsList.appendChild(li)
+  })
+  nonTerminals.forEach(symbol => {
+	  const li = document.createElement('li')
+	  li.textContent = symbol
+	  nonTerminalSymbolsList.appendChild(li)
+  })
+  
+
+
+}
+
+
+function fillActionTable(cc, rules){
+  const at = cc.getActionTable()
+  const gt = cc.getGotoTable()
+
+  const terminals = rules.getTerminals()
   const head = document.createElement('tr')
   head.appendChild(document.createElement('th'))
   terminals.forEach(symbol => {
@@ -64,7 +123,12 @@ const submitRules =  (() => {
     })
     actionDisplay.appendChild(row)
   }
-  const nonTerminals = Rules.getNonTerminals()
+}
+function fillGotoTable(cc, rules){
+  const at = cc.getActionTable()
+  const gt = cc.getGotoTable()
+
+  const nonTerminals = rules.getNonTerminals()
   const gotoHead = document.createElement('tr')
   gotoHead.appendChild(document.createElement('td'))
   nonTerminals.forEach(nt => {
@@ -88,8 +152,9 @@ const submitRules =  (() => {
     gotoDisplay.appendChild(row)
   
   }
-  
-  Rules.getAllRules().forEach(rule => {
+}
+function fillRulesTable(rules){
+rules.getAllRules().forEach(rule => {
     const labelCell = document.createElement('td')
     const contentCell = document.createElement('td')
     const row = document.createElement('tr')
@@ -101,23 +166,53 @@ const submitRules =  (() => {
     rulesTable.appendChild(row)
 
   })
+}
+function clearRulesTable(){
+  rulesTable.innerHTML = '<caption>Rules</caption>'
+}
+function clearSymbolsList(){
+  terminalSymbolsList.innerHTML = ''
+  nonTerminalSymbolsList.innerHTML = ''
+}
+function clearActionTable(){
+  actionDisplay.innerHTML = '<caption>Action Table</caption>'
+}
+function clearGotoTable(){
+  gotoTable.innerHTML = '<caption>Goto Table</caption>'
+}
+function clearStatesTable(){
+  statesTable.innerHTML = '<caption>States and their representative LR(1) Items </caption>'
+
+}
+const submitRules =  (() => {
+  const  rulesString = rulesArea.value
+  if (rulesString.trim() === '')
+	return
+  Rules.initializeRules(rulesString)
+  const entry = Handle.makeHandle(Rules.getExpansionRules(Rules.getGoal())[0], EOF, 0)
+  CC.compute(entry) 
+
+  fillStatesTable(CC)
+  fillActionTable(CC, Rules) 
+  fillGotoTable(CC, Rules)
+  fillRulesTable(Rules)
+
   document.querySelectorAll('table').forEach(table => table.style.display="table")
   document.querySelector('main').style.display = "grid"
-  terminals.forEach(symbol => {
-	  const li = document.createElement('li')
-	  li.textContent = symbol
-	  terminalSymbolsList.appendChild(li)
-  })
-  nonTerminals.forEach(symbol => {
-	  const li = document.createElement('li')
-	  li.textContent = symbol
-	  nonTerminalSymbolsList.appendChild(li)
-  })
-  
-
- formatOutputButton.addEventListener('click', formatOutput)
- submitButton.removeEventListener('click', submitRules)
+   
+  fillSymbolsList(Rules)
+	
+  formatOutputButton.addEventListener('click', formatOutput  )
+  submitButton.removeEventListener('click', submitRules)
+  registerConflicts(CC) 
+  viewConflictsButton.addEventListener('click', () => conflictDialog.showModal())
 })
+
+const rerenderActionTable = (() => {
+	clearActionTable()
+	fillActionTable(CC, Rules)
+})
+
 const writeCodeToClipBoard = () => {
 	navigator.clipboard.writeText(declarations.innerText)
 	//.catch(() => console.log('error copying to clipboard'))
@@ -125,6 +220,7 @@ const writeCodeToClipBoard = () => {
 submitButton.addEventListener('click', submitRules)
 
   const  formatOutput = () =>{
+    document.querySelector('#declarations').textContent = ''
     const numStates = CC.getStates().length
   
 
@@ -159,7 +255,7 @@ submitButton.addEventListener('click', submitRules)
       declarations.appendChild(document.createElement('br'))
       declarations.appendChild(line)
     })
-    formatOutputButton.removeEventListener('click',formatOutput)
+    //formatOutputButton.removeEventListener('click',formatOutput)
     document.querySelector('.generated-code-block').style.display = "block";
     copyCodeButton.addEventListener('click', writeCodeToClipBoard)
   }
