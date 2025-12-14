@@ -130,15 +130,16 @@ rulesList.forEach(rule => {
 			  continue
 		  }
 		  for (	symbol of trailer){
-			beta[i].has(symbol) ? setsChanged = true : 0
-			beta[i].add(symbol)
+			follows[beta[i]].has(symbol) ? setsChanged = true : 0
+			follows[beta[i]].add(symbol)
 		  }
 		  if (firsts[beta[i]].has(EPSILON)){
 			  trailer = trailer.union(firsts[beta[i]])
-			  trailer.delete(s => s === EPSILON)
+			  trailer.delete(EPSILON)
 		  } else {
 			  trailer = new Set(firsts[beta[i]])
 		  }
+		  i--
 	  }
 		
 
@@ -146,6 +147,13 @@ rulesList.forEach(rule => {
 })
 	followSetsAreChanging = setsChanged
 }
+
+nts.forEach(symbol => {
+	if (firsts[symbol].has(EPSILON)){
+		firsts[symbol].delete(EPSILON)
+		firsts[symbol] = firsts[symbol].union(follows[symbol])
+	}
+})
 }
 function getGoal(){
   if (goalCandidates.length > 1){
@@ -181,7 +189,7 @@ function isTerminal(symbol){
 }
 function getNonTerminals() { return Object.keys(nonTerminalSymbols) }
 function getTerminals() {
-  const terminals =  Object.keys(terminalSymbols) 
+  const terminals =  Object.keys(terminalSymbols).filter(s => s !== EPSILON)
   terminals.push(EOF)
   return terminals
 }

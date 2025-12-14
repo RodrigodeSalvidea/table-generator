@@ -1,5 +1,8 @@
 const Handle = (() => {
 function makeHandle(rule, endSymbol, index){
+  if (rule.getRightSide()[0] === EPSILON)
+	index = 1
+  
   function getRule(){
     return rule
   }
@@ -13,7 +16,7 @@ function makeHandle(rule, endSymbol, index){
     return index
   }
   function getCurrentSymbol(){
-    if (rule.getRightSide()[index])
+    if (rule.getRightSide()[index] !== undefined)
       return rule.getRightSide()[index]
     throw new Error("Attempted to get current symbol on a handle where the current symbol is undefined")
   }
