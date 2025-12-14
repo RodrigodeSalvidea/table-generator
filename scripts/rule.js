@@ -5,18 +5,23 @@ const Rules = (() => {
   const terminalSymbols = []
   const symbols = []
   const firsts = []
+  const follows = []
   let goal = undefined
   let goalCandidates = []
   let i = -1
 function makeRuleObject(ruleString){
     const tokens = ruleString.trim(" ").split(/\s+/)
-    if (tokens.length < 3 || tokens[1] !== '->'){
+    if (tokens.length < 2 || tokens[1] !== '->'){
 	    throw new Error(`Rule String ${ruleString} is not a valid ruleString`)
     }
     const leftSide = tokens[0]
     const rightSide = tokens.splice(2)
     const size = leftSide.length
-    const id = ++i   
+    const id = ++i  
+
+    if (rightSide.length === 0){
+	    rightSide.push(EPSILON)
+    }
     function getRightSide(){ return rightSide } //Right Side is an array
     function getLeftSide(){ return leftSide } //Left side is a string
     function getId(){return id} 
@@ -96,12 +101,51 @@ function initializeRules(rulesString){
    })
    
  }
+
  
- 
+
+
 
 
   goalCandidates = symbols.filter(s => existsInLeft[s] && !existsInRight[s])
   
+
+  
+  nts.forEach(symbol => {
+	  follows[symbol] = new Set()
+  })
+    follows[goalCandidates[0]].add(EOF)
+let followSetsAreChanging = true
+while (followSetsAreChanging){
+	let setsChanged = false
+rulesList.forEach(rule => {
+	  let trailer = new Set(follows[rule.getLeftSide()])
+	  let beta = rule.getRightSide()
+	  
+	  let i = beta.length - 1
+	
+	  while (i >= 0){
+		  if (!nonTerminalSymbols[beta[i]]){
+			  i--
+			  continue
+		  }
+		  for (	symbol of trailer){
+			beta[i].has(symbol) ? setsChanged = true : 0
+			beta[i].add(symbol)
+		  }
+		  if (firsts[beta[i]].has(EPSILON)){
+			  trailer = trailer.union(firsts[beta[i]])
+			  trailer.delete(s => s === EPSILON)
+		  } else {
+			  trailer = new Set(firsts[beta[i]])
+		  }
+	  }
+		
+
+  
+})
+	followSetsAreChanging = setsChanged
+}
 }
 function getGoal(){
   if (goalCandidates.length > 1){

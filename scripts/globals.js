@@ -1,2 +1,2 @@
-const EMPTY = ""
+const EPSILON = ""
 const EOF = "$"
