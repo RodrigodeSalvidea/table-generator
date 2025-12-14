@@ -81,9 +81,9 @@ function initializeRules(rulesString){
  let firstSetsAreChanging = true
  const nts = Array.from(Object.keys(nonTerminalSymbols))
  while (firstSetsAreChanging){
-
+   
+   firstSetsAreChanging = false
    nts.forEach((leftSide, index) => {
-    firstSetsAreChanging = false
     rightSides = map[leftSide].map(rule => rule.getRightSide())
     const rightFirsts = rightSides.map(sentence => firsts[sentence[0]])
     let setHasChanged = false
@@ -126,11 +126,12 @@ rulesList.forEach(rule => {
 	
 	  while (i >= 0){
 		  if (!nonTerminalSymbols[beta[i]]){
+			  trailer = new Set(beta[i])
 			  i--
 			  continue
 		  }
 		  for (	symbol of trailer){
-			follows[beta[i]].has(symbol) ? setsChanged = true : 0
+			!follows[beta[i]].has(symbol) ? setsChanged = true : 0
 			follows[beta[i]].add(symbol)
 		  }
 		  if (firsts[beta[i]].has(EPSILON)){

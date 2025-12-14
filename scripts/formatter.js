@@ -90,7 +90,7 @@ const Formatter = (()=> {
     }
 
     function formatRuleSizes(rules){
-        return `{${rules.getAllRules().map(rule => rule.getRightSide().length).join(", ")}}`
+        return `{${rules.getAllRules().map(rule => rule.getRightSide()[0] === EPSILON ? 0 : rule.getRightSide().length).join(", ")}}`
 
     }
 
