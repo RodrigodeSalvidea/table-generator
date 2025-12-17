@@ -20,7 +20,7 @@ const Formatter = (()=> {
         const terminals = rules.getTerminals()
 
 
-        let actionTableString = "{ "
+        let actionTableString = "{\n"
         for(let state = 0; state < actionTable.length; state++){
             actionTableString+= "{"
             for(let i = 0; i < terminals.length; i++){
@@ -36,12 +36,12 @@ const Formatter = (()=> {
             }
             actionTableString+= "}"
             if (state < actionTable.length - 1){
-                actionTableString += ", "
+                actionTableString += ",\n"
             }
         
             
         }
-        actionTableString+= "}"
+        actionTableString+= "\n}"
         
         return actionTableString
     }
@@ -50,7 +50,7 @@ const Formatter = (()=> {
         const nonTerminals = rules.getNonTerminals()
 
 
-        let gotoTableString = "{ "
+        let gotoTableString = "{\n"
 
         for(let state = 0; state < gotoTable.length; state++){
             gotoTableString += " { "
@@ -63,11 +63,11 @@ const Formatter = (()=> {
             }
             gotoTableString+= "}"
             if (state < gotoTable.length - 1){
-                gotoTableString += ", "
+                gotoTableString += ",\n"
             }
 
         }
-        gotoTableString+= "}"
+        gotoTableString+= "\n}"
 
 
         return gotoTableString
@@ -93,6 +93,9 @@ const Formatter = (()=> {
         return `{${rules.getAllRules().map(rule => rule.getRightSide()[0] === EPSILON ? 0 : rule.getRightSide().length).join(", ")}}`
 
     }
+    function formatRuleReductions(rules){
+	return `{${rules.getAllRules().map(rule => rule.getLeftSide()).join(", ")}}`
+    }
 
 
     
@@ -108,7 +111,8 @@ const Formatter = (()=> {
         formatActionTable,
         formatGotoTable,
         formatNonTerminals,
-        formatRuleSizes
+        formatRuleSizes,
+	formatRuleReductions
 
     }
     Object.freeze(returnObj)

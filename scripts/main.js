@@ -233,6 +233,18 @@ const writeCodeToClipBoard = () => {
 	navigator.clipboard.writeText(declarations.innerText)
 	//.catch(() => console.log('error copying to clipboard'))
 }
+const downloadCode = (() => {
+	const blob = new Blob([declarations.innerText])
+	const url = URL.createObjectURL(blob)
+	const a = document.createElement('a')
+	a.style.display = 'none'
+	a.href = url
+	a.download = 'parser-tables'
+	document.body.appendChild(a)
+	a.click()
+	document.body.removeChild(a)
+	URL.revokeObjectURL(url);
+})
 submitButton.addEventListener('click', submitRules)
 
   const  formatOutput = () =>{
@@ -247,7 +259,8 @@ submitButton.addEventListener('click', submitRules)
     const shiftDecl =  '#define SHIFT  0x80000000' 
     const acceptDecl = '#define  ACCEPT 0x40000000'
     const undefinedDecl = `#define UNDEFINED 0xffffffff`
-    const ruleTableDecl = `int ruleSizes[${Rules.getAllRules().length}] = ${Formatter.formatRuleSizes(Rules)};`
+    const ruleSizeTableDecl = `int ruleSizes[${Rules.getAllRules().length}] = ${Formatter.formatRuleSizes(Rules)};`
+    const ruleReductionTableDecl = `enum NonTerminal[${Rules.getAllRules().length}] = ${Formatter.formatRuleReductions(Rules)};`
     const actionTableDecl = `Action actionTable[${numStates}][${Rules.getTerminals().length}] = ${Formatter.formatActionTable(CC, Rules)};` 
     const gotoTableDecl = `ParserState gotoTable[${numStates}][${Rules.getNonTerminals().length}] = ${Formatter.formatGotoTable(CC, Rules)};`
     const nonTerminalsDecl = `${Formatter.formatNonTerminals(Rules)};`
@@ -262,7 +275,8 @@ submitButton.addEventListener('click', submitRules)
       nonTerminalsDecl,
       actionTypeDecl, 
       parserStateDecl,
-      ruleTableDecl,
+      ruleSizeTableDecl,
+      ruleReductionTableDecl,
       actionTableDecl,
       gotoTableDecl
     ]).forEach( decl =>{ 
@@ -273,7 +287,7 @@ submitButton.addEventListener('click', submitRules)
     })
     //formatOutputButton.removeEventListener('click',formatOutput)
     document.querySelector('.generated-code-block').style.display = "block";
-    copyCodeButton.addEventListener('click', writeCodeToClipBoard)
+    copyCodeButton.addEventListener('click', downloadCode)
     copyCodeButton.classList.toggle('inactive', false)
     formatOutputButton.classList.toggle('inactive', true)
     formatOutputButton.removeEventListener('click', formatOutput)
