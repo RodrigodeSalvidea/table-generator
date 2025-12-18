@@ -94,7 +94,22 @@ const Formatter = (()=> {
 
     }
     function formatRuleReductions(rules){
-	return `{${rules.getAllRules().map(rule => rule.getLeftSide()).join(", ")}}`
+	    return `{${rules.getAllRules().map(rule => rule.getLeftSide()).join(", ")}}`
+    }
+
+    function formatTerminalSymbols(rules){
+        let terminalsString = "enum Terminal{\n"
+        const terminals = rules.getTerminals()
+
+        for(let i = 0; i < terminals.length; i++){
+            terminalsString+= "\t" + terminals[i]
+            if (i < terminals.length - 1){
+                terminalsString+= ","
+            }
+            terminalsString+="\n"
+        }
+        terminalsString+="}"
+        return terminalsString
     }
 
 
@@ -112,7 +127,8 @@ const Formatter = (()=> {
         formatGotoTable,
         formatNonTerminals,
         formatRuleSizes,
-	formatRuleReductions
+	    formatRuleReductions,
+        formatTerminalSymbols
 
     }
     Object.freeze(returnObj)

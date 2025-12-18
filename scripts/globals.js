@@ -1,2 +1,2 @@
 const EPSILON = ""
-const EOF = "$"
+const EOF = "EOF_TOKEN"

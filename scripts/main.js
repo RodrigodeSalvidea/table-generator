@@ -264,7 +264,7 @@ submitButton.addEventListener('click', submitRules)
     const actionTableDecl = `Action actionTable[${numStates}][${Rules.getTerminals().length}] = ${Formatter.formatActionTable(CC, Rules)};` 
     const gotoTableDecl = `ParserState gotoTable[${numStates}][${Rules.getNonTerminals().length}] = ${Formatter.formatGotoTable(CC, Rules)};`
     const nonTerminalsDecl = `${Formatter.formatNonTerminals(Rules)};`
-    
+    const terminalsDecl = `${Formatter.formatTerminalSymbols(Rules)};`
 
   
     Array.from([
@@ -272,6 +272,7 @@ submitButton.addEventListener('click', submitRules)
       shiftDecl,
       acceptDecl,
       undefinedDecl,
+      terminalsDecl,
       nonTerminalsDecl,
       actionTypeDecl, 
       parserStateDecl,
