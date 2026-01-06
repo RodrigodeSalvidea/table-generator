@@ -94,7 +94,7 @@ const Formatter = (()=> {
 
     }
     function formatRuleReductions(rules){
-	    return `{${rules.getAllRules().map(rule => rule.getLeftSide()).join(", ")}}`
+	    return `{${rules.getAllRules().map(rule => `PARSER_${rule.getLeftSide()}`).join(", ")}}`
     }
 
     function formatTerminalSymbols(rules){
