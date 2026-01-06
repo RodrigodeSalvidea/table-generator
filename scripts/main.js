@@ -298,8 +298,8 @@ submitButton.addEventListener('click', submitRules)
 	    nonTerminalsDecl,
 	    actionTypeDecl,
 	    parserStateDecl,
+	    sizesDecl,
 	    externsDecl,
-	    sizesDecl
     ]).join("\n")
 
     sourceFileText = Array.from([
@@ -320,8 +320,8 @@ submitButton.addEventListener('click', submitRules)
       nonTerminalsDecl,
       actionTypeDecl, 
       parserStateDecl,
-      externsDecl,
       sizesDecl,
+      externsDecl,
       srcLabel,
       ruleSizeTableDecl,
       ruleReductionTableDecl,

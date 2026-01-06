@@ -6,8 +6,7 @@ const Formatter = (()=> {
     // gotoTable: table[state][token] = state
 
    	function formatSizeMacros(cc, rules){
-	return 
-	`
+	return`
 #define NUM_RULES ${ rules.getAllRules().length}
 #define NUM_STATES ${ cc.getStates().length }
 #define NUM_TERMINALS ${ rules.getTerminals().length }
