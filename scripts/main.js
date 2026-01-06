@@ -233,23 +233,41 @@ const writeCodeToClipBoard = () => {
 	navigator.clipboard.writeText(declarations.innerText)
 	//.catch(() => console.log('error copying to clipboard'))
 }
+
+let headerFileText = undefined
+let sourceFileText = undefined
+
 const downloadCode = (() => {
-	const blob = new Blob([declarations.innerText])
-	const url = URL.createObjectURL(blob)
-	const a = document.createElement('a')
-	a.style.display = 'none'
-	a.href = url
-	a.download = 'parser-tables'
-	document.body.appendChild(a)
-	a.click()
-	document.body.removeChild(a)
-	URL.revokeObjectURL(url);
+	const srcBlob = new Blob([sourceFileText])
+	const srcUrl = URL.createObjectURL(srcBlob)
+	const srcA = document.createElement('a')
+	srcA.style.display = 'none'
+	srcA.href = srcUrl
+	srcA.download = 'parser-tables.c'
+	document.body.appendChild(srcA)
+	srcA.click()
+	document.body.removeChild(srcA)
+	URL.revokeObjectURL(srcUrl);
+
+	const headBlob = new Blob([headerFileText])
+	const headUrl = URL.createObjectURL(headBlob)
+	const headA = document.createElement('a')
+	headA.style.display = 'none'
+	headA.href = headUrl
+	headA.download = 'parser-tables.h'
+	document.body.appendChild(headA)
+	headA.click()
+	document.body.removeChild(headA)
+	URL.revokeObjectURL(headUrl)
+
+
 })
 submitButton.addEventListener('click', submitRules)
 
   const  formatOutput = () =>{
     document.querySelector('#declarations').textContent = ''
     const numStates = CC.getStates().length
+    const fileName = 'parser-tables'
   
 
 
@@ -259,15 +277,41 @@ submitButton.addEventListener('click', submitRules)
     const shiftDecl =  '#define SHIFT  0x80000000' 
     const acceptDecl = '#define  ACCEPT 0x40000000'
     const undefinedDecl = `#define UNDEFINED 0xffffffff`
-    const ruleSizeTableDecl = `int ruleSizes[${Rules.getAllRules().length}] = ${Formatter.formatRuleSizes(Rules)};`
-    const ruleReductionTableDecl = `enum NonTerminal[${Rules.getAllRules().length}] = ${Formatter.formatRuleReductions(Rules)};`
-    const actionTableDecl = `Action actionTable[${numStates}][${Rules.getTerminals().length}] = ${Formatter.formatActionTable(CC, Rules)};` 
-    const gotoTableDecl = `ParserState gotoTable[${numStates}][${Rules.getNonTerminals().length}] = ${Formatter.formatGotoTable(CC, Rules)};`
-    const nonTerminalsDecl = `${Formatter.formatNonTerminals(Rules)};`
-    const terminalsDecl = `${Formatter.formatTerminalSymbols(Rules)};`
-
+    const ruleSizeTableDecl = `int ruleSizes[ NUM_RULES ] = ${Formatter.formatRuleSizes(Rules)};`
+    const ruleReductionTableDecl = `NonTerminal reductions[ NUM_RULES ] = ${Formatter.formatRuleReductions(Rules)};`
+    const actionTableDecl = `Action actionTable[ NUM_STATES ][ NUM_TERMINALS ] = ${Formatter.formatActionTable(CC, Rules)};` 
+    const gotoTableDecl = `ParserState gotoTable[ NUM_STATES ][ NUM_NONTERMINALS] = ${Formatter.formatGotoTable(CC, Rules)};`
+    const nonTerminalsDecl = `${Formatter.formatNonTerminals(Rules)};${'\n'}typedef enum e_Terminal Terminal;`
+    const terminalsDecl = `${Formatter.formatTerminalSymbols(Rules)};${'\n'}typedef enum e_NonTerminal NonTerminal;`
+    const sizesDecl = Formatter.formatSizeMacros(CC, Rules)
   
+    const externsDecl = Formatter.formatExterns()
+    const srcLabel = Formatter.formatSourceFileName(fileName)
+    const headerLabel = Formatter.formatHeaderFileName(fileName)
+    
+    headerFileText = Array.from([
+	    reduceDecl,
+	    shiftDecl,
+	    acceptDecl,
+	    undefinedDecl,
+	    terminalsDecl,
+	    nonTerminalsDecl,
+	    actionTypeDecl,
+	    parserStateDecl,
+	    externsDecl,
+	    sizesDecl
+    ]).join("\n")
+
+    sourceFileText = Array.from([
+	    ruleSizeTableDecl,
+	    ruleReductionTableDecl,
+	    actionTableDecl,
+	    gotoTableDecl
+    ]).join("\n")
+
+
     Array.from([
+      headerLabel,
       reduceDecl,
       shiftDecl,
       acceptDecl,
@@ -276,6 +320,9 @@ submitButton.addEventListener('click', submitRules)
       nonTerminalsDecl,
       actionTypeDecl, 
       parserStateDecl,
+      externsDecl,
+      sizesDecl,
+      srcLabel,
       ruleSizeTableDecl,
       ruleReductionTableDecl,
       actionTableDecl,

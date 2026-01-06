@@ -5,16 +5,17 @@ const Formatter = (()=> {
     // actionTable: table[state][token] = {action: , state: , rule: }
     // gotoTable: table[state][token] = state
 
+   	function formatSizeMacros(cc, rules){
+	return 
+	`
+#define NUM_RULES ${ rules.getAllRules().length}
+#define NUM_STATES ${ cc.getStates().length }
+#define NUM_TERMINALS ${ rules.getTerminals().length }
+#define NUM_NONTERMINALS ${ rules.getNonTerminals().length }
+`
+	}
     
-    
-    function getTypes(){
-
-    }
-    function getMacros(cc){
-
-
-    }
-    function formatActionTable(cc, rules){
+        function formatActionTable(cc, rules){
         const actionTable = cc.getActionTable()
         const nonTerminals = rules.getNonTerminals()
         const terminals = rules.getTerminals()
@@ -76,10 +77,10 @@ const Formatter = (()=> {
 
     
     function formatNonTerminals(rules){
-        let nonTerminalsString = "enum NonTerminal{\n"
+        let nonTerminalsString = "enum e_NonTerminal{\n"
         const nonTerminals = rules.getNonTerminals()
         for(let i = 0; i < nonTerminals.length; i++){
-            nonTerminalsString+= "\t" + nonTerminals[i]
+            nonTerminalsString+= "\t" + `PARSER_${nonTerminals[i]}`
             if (i < nonTerminals.length - 1){
                 nonTerminalsString+= ","
             }
@@ -98,11 +99,11 @@ const Formatter = (()=> {
     }
 
     function formatTerminalSymbols(rules){
-        let terminalsString = "enum Terminal{\n"
+        let terminalsString = "enum e_Terminal{\n"
         const terminals = rules.getTerminals()
 
         for(let i = 0; i < terminals.length; i++){
-            terminalsString+= "\t" + terminals[i]
+            terminalsString+= "\t" + `PARSER_${terminals[i]}`
             if (i < terminals.length - 1){
                 terminalsString+= ","
             }
@@ -113,22 +114,32 @@ const Formatter = (()=> {
     }
 
 
-    
-    
-    
-
-
-
+   function formatExterns(){
+	   return `
+extern int ruleSizes[ NUM_RULES ];
+extern NonTerminal reductions[ NUM_RULES ];
+extern Action actionTavle[ NUM_STATES ][ NUM_TERMINALS ];
+extern ParserState gotoTable[ NUM_STATES ][ NUM_NONTERMINALS ];    
+`
+   }
+   function formatSourceFileName(name){
+   	return `----${name}.c----`
+   }
+   function formatHeaderFileName(name){
+	return `----${name}.h----`
+   }
 
     const returnObj = {
-        getTypes,
-        getMacros,
-        formatActionTable,
+        formatSizeMacros,
+	formatActionTable,
         formatGotoTable,
         formatNonTerminals,
         formatRuleSizes,
-	    formatRuleReductions,
-        formatTerminalSymbols
+	formatRuleReductions,
+        formatTerminalSymbols,
+	formatExterns,
+	formatSourceFileName, 
+	formatHeaderFileName
 
     }
     Object.freeze(returnObj)
