@@ -42,3 +42,9 @@ Thumbs.db
 
 # Keep existing ignores
 sample-grammars/
+
+
+# packages
+
+package.json
+.prettierrc.*
