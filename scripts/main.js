@@ -13,6 +13,11 @@ const conflictDialog = document.querySelector('#conflicts-dialog');
 const viewConflictsButton = document.querySelector('#view-conflicts-button');
 const rerenderActionTableButton = document.querySelector('#rerender-action-table-button');
 
+
+
+let headerFileText = undefined;
+let sourceFileText = undefined;
+
 const worker = new Worker("./scripts/worker.js")
 worker.onerror = (event) => {
   console.error('Worker error details:');
@@ -35,13 +40,31 @@ worker.onmessage = (m) => {
   	fillSymbolsList(messageData.rules);
 
   	if (messageData.conflicts.length > 0) {
-    	  registerConflicts(messageData.cc, messsageData.conflicts);
+    	  registerConflicts(messageData.cc, messageData.conflicts);
     	  viewConflictsButton.addEventListener('click', () => conflictDialog.showModal());
     	  viewConflictsButton.classList.toggle('inactive', false);
   	}
-
-
+	formatOutputButton.addEventListener('click', formatOutput)
+	formatOutputButton.classList.toggle('inactive', false)
 	break;
+
+	case "format":
+        messageData.displayText.forEach(decl => {
+    	const line = document.createElement('span');
+    	line.textContent = decl;
+    	declarations.appendChild(document.createElement('br'));
+    	declarations.appendChild(line);
+  	});
+  	formatOutputButton.removeEventListener('click',formatOutput)
+  	document.querySelector('.generated-code-block').style.display = 'block';
+  	copyCodeButton.addEventListener('click', downloadCode);
+  	copyCodeButton.classList.toggle('inactive', false);
+  	formatOutputButton.classList.toggle('inactive', true);
+  	formatOutputButton.removeEventListener('click', formatOutput);
+	headerFileText = messageData.headerFileText
+	sourceFileText = messageData.sourceFileText
+	break;
+
 	}
 /*
   formatOutputButton.addEventListener('click', formatOutput);
@@ -260,8 +283,6 @@ const writeCodeToClipBoard = () => {
   //.catch(() => console.log('error copying to clipboard'))
 };
 
-let headerFileText = undefined;
-let sourceFileText = undefined;
 
 const downloadCode = () => {
   const srcBlob = new Blob([sourceFileText]);
@@ -290,7 +311,8 @@ submitButton.addEventListener('click', submitRules);
 
 const formatOutput = () => {
   document.querySelector('#declarations').textContent = '';
-  const numStates = CC.getStates().length;
+  worker.postMessage({message: "format"})
+ /* const numStates = CC.getStates().length;
   const fileName = 'parser-tables';
 
   const actionTypeDecl = `typedef unsigned int Action;`;
@@ -357,6 +379,7 @@ const formatOutput = () => {
     declarations.appendChild(document.createElement('br'));
     declarations.appendChild(line);
   });
+  */
   //formatOutputButton.removeEventListener('click',formatOutput)
   document.querySelector('.generated-code-block').style.display = 'block';
   copyCodeButton.addEventListener('click', downloadCode);
