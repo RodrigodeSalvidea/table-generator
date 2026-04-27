@@ -54,17 +54,17 @@ const registerConflicts = cc => {
   conflictDialog.appendChild(doneButton);
 };
 
-function fillStatesTable(cc) {
+function fillStatesTable(states) {
   let i = -1;
-  CC.getStates().forEach(state => {
+  states.forEach(state => {
     const ul = document.createElement('ul');
     const labelCell = document.createElement('td');
     const contentCell = document.createElement('td');
     const row = document.createElement('tr');
 
-    state.getHandles().forEach(item => {
+    state.forEach(item => {
       const li = document.createElement('li');
-      li.textContent = item.toString();
+      li.textContent = item;
       ul.append(li);
     });
     contentCell.append(ul);
@@ -187,7 +187,7 @@ const submitRules = () => {
   const entry = Handle.makeHandle(Rules.getExpansionRules(Rules.getGoal())[0], EOF, 0);
   CC.compute(entry);
 
-  fillStatesTable(CC);
+  fillStatesTable(CC.exportData().states);
   fillActionTable(CC, Rules);
   fillGotoTable(CC, Rules);
   fillRulesTable(Rules);
