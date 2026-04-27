@@ -76,8 +76,8 @@ function fillStatesTable(states) {
 }
 
 function fillSymbolsList(rules) {
-  const terminals = rules.getTerminals();
-  const nonTerminals = rules.getNonTerminals();
+  const terminals = rules.terminals;
+  const nonTerminals = rules.nonTerminals;
   terminals.forEach(symbol => {
     const li = document.createElement('li');
     li.textContent = symbol;
@@ -195,7 +195,7 @@ const submitRules = () => {
   document.querySelectorAll('table').forEach(table => (table.style.display = 'table'));
   document.querySelector('main').style.display = 'grid';
 
-  fillSymbolsList(Rules);
+  fillSymbolsList(Rules.exportData());
 
   formatOutputButton.addEventListener('click', formatOutput);
   submitButton.removeEventListener('click', submitRules);
