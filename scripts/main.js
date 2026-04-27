@@ -91,10 +91,10 @@ function fillSymbolsList(rules) {
 }
 
 function fillActionTable(cc, rules) {
-  const at = cc.getActionTable();
-  const gt = cc.getGotoTable();
+  const at = cc.actionTable;
+  const gt = cc.gotoTable;
 
-  const terminals = rules.getTerminals();
+  const terminals = rules.terminals
   const head = document.createElement('tr');
   head.appendChild(document.createElement('th'));
   terminals.forEach(symbol => {
@@ -188,7 +188,7 @@ const submitRules = () => {
   CC.compute(entry);
 
   fillStatesTable(CC.exportData().states);
-  fillActionTable(CC, Rules);
+  fillActionTable(CC.exportData(), Rules.exportData());
   fillGotoTable(CC, Rules);
   fillRulesTable(Rules);
 
