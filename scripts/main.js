@@ -115,7 +115,7 @@ function fillActionTable(cc, rules) {
         row.appendChild(cell);
         return;
       }
-      cell.textContent = ` ${at[i][symbol].action}  ${at[i][symbol].action === 'shift' ? at[i][symbol].state : at[i][symbol].rule.getId()}`;
+      cell.textContent = ` ${at[i][symbol].action}  ${at[i][symbol].action === 'shift' ? at[i][symbol].state : at[i][symbol].rule}`;
       row.appendChild(cell);
     });
     actionDisplay.appendChild(row);

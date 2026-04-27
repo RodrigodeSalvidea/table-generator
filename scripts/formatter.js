@@ -25,7 +25,7 @@ const Formatter = (() => {
         if (actionTable[state][terminals[i]] === undefined) {
           actionTableString += 'UNDEFINED';
         } else {
-          actionTableString += `${actionTable[state][terminals[i]].action.toUpperCase()} | ${actionTable[state][terminals[i]].rule !== undefined ? actionTable[state][terminals[i]].rule.getId() : actionTable[state][terminals[i]].state}`;
+          actionTableString += `${actionTable[state][terminals[i]].action.toUpperCase()} | ${actionTable[state][terminals[i]].rule !== undefined ? actionTable[state][terminals[i]].rule : actionTable[state][terminals[i]].state}`;
         }
         if (i < terminals.length - 1) {
           actionTableString += ', ';

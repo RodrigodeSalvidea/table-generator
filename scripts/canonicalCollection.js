@@ -37,6 +37,9 @@ const SetFactory = (() => {
       );
       return g;
     };
+    set.export = () => {
+      return handles.map(h => h.toString())
+    }
     set.getEdges = () => {
       const found = [];
       return handles
@@ -125,14 +128,14 @@ const CC = (() => {
               item.getEnd(),
               {
                 action: item.getRule().getLeftSide() === goalSymbol ? 'accept' : 'reduce',
-                rule: item.getRule(),
+                rule: item.getRule().getId(),
               },
               actionTable[i][item.getEnd()]
             );
           }
           actionTable[i][item.getEnd()] = {
             action: item.getRule().getLeftSide() === goalSymbol ? 'accept' : 'reduce',
-            rule: item.getRule(),
+            rule: item.getRule().getId(),
           };
         }
       });
@@ -150,5 +153,11 @@ const CC = (() => {
   function changeAction(set, symbol, action) {
     actionTable[set][symbol] = action;
   }
+  function exportData() {
+	  return {
+		  states: cc.map(state => state.export()),
+	  }
+  }
+
   return { compute, debug, getActionTable, getGotoTable, getStates, changeAction };
 })();
