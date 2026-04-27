@@ -156,6 +156,8 @@ const CC = (() => {
   function exportData() {
 	  return {
 		  states: cc.map(state => state.export()),
+		  actionTable: actionTable,
+		  gotoTable: gotoTable
 	  }
   }
 
