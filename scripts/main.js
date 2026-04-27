@@ -124,10 +124,10 @@ function fillActionTable(cc, rules) {
   rerenderActionTableButton.classList.toggle('inactive', true);
 }
 function fillGotoTable(cc, rules) {
-  const at = cc.getActionTable();
-  const gt = cc.getGotoTable();
+  const at = cc.actionTable;
+  const gt = cc.gotoTable;
 
-  const nonTerminals = rules.getNonTerminals();
+  const nonTerminals = rules.nonTerminals;
   const gotoHead = document.createElement('tr');
   gotoHead.appendChild(document.createElement('td'));
   nonTerminals.forEach(nt => {
@@ -189,7 +189,7 @@ const submitRules = () => {
 
   fillStatesTable(CC.exportData().states);
   fillActionTable(CC.exportData(), Rules.exportData());
-  fillGotoTable(CC, Rules);
+  fillGotoTable(CC.exportData(), Rules.exportData());
   fillRulesTable(Rules);
 
   document.querySelectorAll('table').forEach(table => (table.style.display = 'table'));
