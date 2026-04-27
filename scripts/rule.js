@@ -187,6 +187,13 @@ const Rules = (() => {
   function getAllRules() {
     return rulesList;
   }
+  function exportData() {
+    return {
+      nonTerminals: getNonTerminals(),
+      terminals: getTerminals(),
+      rules: rulesList.map(rule => rule.toString()),
+    }
+  }
 
   return {
     initializeRules,
@@ -197,5 +204,6 @@ const Rules = (() => {
     getGoal,
     getNonTerminals,
     getTerminals,
+    exportData
   };
 })();

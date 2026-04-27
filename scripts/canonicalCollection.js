@@ -159,5 +159,5 @@ const CC = (() => {
 	  }
   }
 
-  return { compute, debug, getActionTable, getGotoTable, getStates, changeAction };
+  return { compute, debug, getActionTable, getGotoTable, getStates, changeAction, exportData };
 })();
