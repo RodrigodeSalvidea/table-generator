@@ -18,6 +18,9 @@ const rerenderActionTableButton = document.querySelector('#rerender-action-table
 let headerFileText = undefined;
 let sourceFileText = undefined;
 
+
+
+
 const worker = new Worker("./scripts/worker.js")
 worker.onerror = (event) => {
   console.error('Worker error details:');
@@ -63,6 +66,7 @@ worker.onmessage = (m) => {
   	formatOutputButton.removeEventListener('click', formatOutput);
 	headerFileText = messageData.headerFileText
 	sourceFileText = messageData.sourceFileText
+	codeIsGenerated = true
 	break;
 
 	case "query":
@@ -109,12 +113,16 @@ const registerConflicts = (cc, conflicts) => {
       const state = conflict.state;
       const symbol = conflict.symbol;
       button.addEventListener('click', () => {
-//        cc.changeAction(state, symbol, action); NOTE: Functionality is broken during migration. Fix after migration to web worker is complete
 	worker.postMessage({message:"choose", state, symbol, action} )      //
+	
 	formatOutputButton.addEventListener('click', formatOutput)
 	formatOutputButton.classList.toggle('inactive', false)
+	
         rerenderActionTableButton.addEventListener('click', rerenderActionTable);
         rerenderActionTableButton.classList.toggle('inactive', false);
+
+	copyCodeButton.removeEventListener('click', downloadCode)
+	copyCodeButton.classList.toggle('inactive', true)
       });
       optionBox.appendChild(optionHeader);
       optionBox.appendChild(button);
