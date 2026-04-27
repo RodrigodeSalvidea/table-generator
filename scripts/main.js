@@ -152,13 +152,14 @@ function fillGotoTable(cc, rules) {
   }
 }
 function fillRulesTable(rules) {
-  rules.getAllRules().forEach(rule => {
+  let id = -1
+  rules.forEach(rule => {
     const labelCell = document.createElement('td');
     const contentCell = document.createElement('td');
     const row = document.createElement('tr');
 
-    labelCell.textContent = String(rule.getId());
-    contentCell.textContent = rule.toString();
+    labelCell.textContent = String( id++ );
+    contentCell.textContent = rule;
     row.appendChild(labelCell);
     row.appendChild(contentCell);
     rulesTable.appendChild(row);
@@ -190,7 +191,7 @@ const submitRules = () => {
   fillStatesTable(CC.exportData().states);
   fillActionTable(CC.exportData(), Rules.exportData());
   fillGotoTable(CC.exportData(), Rules.exportData());
-  fillRulesTable(Rules);
+  fillRulesTable(Rules.exportData().rules);
 
   document.querySelectorAll('table').forEach(table => (table.style.display = 'table'));
   document.querySelector('main').style.display = 'grid';
