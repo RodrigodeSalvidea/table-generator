@@ -19,7 +19,8 @@ worker.onerror = (event) => {
   console.error(event.message)
 };
 console.log('Worker created:', worker);
-worker.onmessage = (messageData) => {
+worker.onmessage = (m) => {
+	const messageData = m.data
 	switch(messageData.message){
 	case "init":
 	
@@ -31,7 +32,7 @@ worker.onmessage = (messageData) => {
   	document.querySelectorAll('table').forEach(table => (table.style.display = 'table'));
   	document.querySelector('main').style.display = 'grid';
 
-  	fillSymbolsList(messageData.cc.rules);
+  	fillSymbolsList(messageData.rules);
 	break;
 	}
 /*
@@ -226,22 +227,11 @@ const submitRules = () => {
 	  message: "init",
 	  rulesString: rulesString
   })
-/*
-  fillStatesTable(CC.exportData().states);
-  fillActionTable(CC.exportData(), Rules.exportData());
-  fillGotoTable(CC.exportData(), Rules.exportData());
-  fillRulesTable(Rules.exportData().rules);
-*/
 
-/*
-  document.querySelectorAll('table').forEach(table => (table.style.display = 'table'));
-  document.querySelector('main').style.display = 'grid';
-
-  fillSymbolsList(Rules.exportData());
-
-  formatOutputButton.addEventListener('click', formatOutput);
   submitButton.removeEventListener('click', submitRules);
   submitButton.classList.toggle('inactive', true);
+	/*
+  formatOutputButton.addEventListener('click', formatOutput);
   if (ConflictRecorder.getConflicts().length > 0) {
     registerConflicts(CC.exportData(), ConflictRecorder.exportData());
     viewConflictsButton.addEventListener('click', () => conflictDialog.showModal());
