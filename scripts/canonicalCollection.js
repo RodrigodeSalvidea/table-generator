@@ -38,8 +38,8 @@ const SetFactory = (() => {
       return g;
     };
     set.export = () => {
-      return handles.map(h => h.toString())
-    }
+      return handles.map(h => h.toString());
+    };
     set.getEdges = () => {
       const found = [];
       return handles
@@ -154,11 +154,11 @@ const CC = (() => {
     actionTable[set][symbol] = action;
   }
   function exportData() {
-	  return {
-		  states: cc.map(state => state.export()),
-		  actionTable: actionTable,
-		  gotoTable: gotoTable
-	  }
+    return {
+      states: cc.map(state => state.export()),
+      actionTable: actionTable,
+      gotoTable: gotoTable,
+    };
   }
 
   return { compute, debug, getActionTable, getGotoTable, getStates, changeAction, exportData };

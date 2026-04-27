@@ -13,68 +13,60 @@ const conflictDialog = document.querySelector('#conflicts-dialog');
 const viewConflictsButton = document.querySelector('#view-conflicts-button');
 const rerenderActionTableButton = document.querySelector('#rerender-action-table-button');
 
-
-
 let headerFileText = undefined;
 let sourceFileText = undefined;
 
-
-
-
-const worker = new Worker("./scripts/worker.js")
-worker.onerror = (event) => {
+const worker = new Worker('./scripts/worker.js');
+worker.onerror = event => {
   console.error('Worker error details:');
-  console.error(event.message)
+  console.error(event.message);
 };
 console.log('Worker created:', worker);
-worker.onmessage = (m) => {
-	const messageData = m.data
-	switch(messageData.message){
-	case "init":
-	
-  	fillStatesTable(messageData.cc.states);
-  	fillActionTable(messageData.cc, messageData.rules);
-  	fillGotoTable(messageData.cc, messageData.rules);
-  	fillRulesTable(messageData.rules.rules);
+worker.onmessage = m => {
+  const messageData = m.data;
+  switch (messageData.message) {
+    case 'init':
+      fillStatesTable(messageData.cc.states);
+      fillActionTable(messageData.cc, messageData.rules);
+      fillGotoTable(messageData.cc, messageData.rules);
+      fillRulesTable(messageData.rules.rules);
 
-  	document.querySelectorAll('table').forEach(table => (table.style.display = 'table'));
-  	document.querySelector('main').style.display = 'grid';
+      document.querySelectorAll('table').forEach(table => (table.style.display = 'table'));
+      document.querySelector('main').style.display = 'grid';
 
-  	fillSymbolsList(messageData.rules);
+      fillSymbolsList(messageData.rules);
 
-  	if (messageData.conflicts.length > 0) {
-    	  registerConflicts(messageData.cc, messageData.conflicts);
-    	  viewConflictsButton.addEventListener('click', () => conflictDialog.showModal());
-    	  viewConflictsButton.classList.toggle('inactive', false);
-  	}
-	formatOutputButton.addEventListener('click', formatOutput)
-	formatOutputButton.classList.toggle('inactive', false)
-	break;
+      if (messageData.conflicts.length > 0) {
+        registerConflicts(messageData.cc, messageData.conflicts);
+        viewConflictsButton.addEventListener('click', () => conflictDialog.showModal());
+        viewConflictsButton.classList.toggle('inactive', false);
+      }
+      formatOutputButton.addEventListener('click', formatOutput);
+      formatOutputButton.classList.toggle('inactive', false);
+      break;
 
-	case "format":
-        messageData.displayText.forEach(decl => {
-    	const line = document.createElement('span');
-    	line.textContent = decl;
-    	declarations.appendChild(document.createElement('br'));
-    	declarations.appendChild(line);
-  	});
-  	formatOutputButton.removeEventListener('click',formatOutput)
-  	document.querySelector('.generated-code-block').style.display = 'block';
-  	copyCodeButton.addEventListener('click', downloadCode);
-  	copyCodeButton.classList.toggle('inactive', false);
-  	formatOutputButton.classList.toggle('inactive', true);
-  	formatOutputButton.removeEventListener('click', formatOutput);
-	headerFileText = messageData.headerFileText
-	sourceFileText = messageData.sourceFileText
-	codeIsGenerated = true
-	break;
+    case 'format':
+      messageData.displayText.forEach(decl => {
+        const line = document.createElement('span');
+        line.textContent = decl;
+        declarations.appendChild(document.createElement('br'));
+        declarations.appendChild(line);
+      });
+      formatOutputButton.removeEventListener('click', formatOutput);
+      document.querySelector('.generated-code-block').style.display = 'block';
+      copyCodeButton.addEventListener('click', downloadCode);
+      copyCodeButton.classList.toggle('inactive', false);
+      formatOutputButton.classList.toggle('inactive', true);
+      formatOutputButton.removeEventListener('click', formatOutput);
+      headerFileText = messageData.headerFileText;
+      sourceFileText = messageData.sourceFileText;
+      codeIsGenerated = true;
+      break;
 
-	case "query":
-	 fillActionTable(messageData.cc, messageData.rules)
-	 
-
-	}
-/*
+    case 'query':
+      fillActionTable(messageData.cc, messageData.rules);
+  }
+  /*
   formatOutputButton.addEventListener('click', formatOutput);
   submitButton.removeEventListener('click', submitRules);
   submitButton.classList.toggle('inactive', true);
@@ -86,10 +78,7 @@ worker.onmessage = (m) => {
 
   formatOutputButton.classList.toggle('inactive', false);
 */
-
-
-}
-
+};
 
 const registerConflicts = (cc, conflicts) => {
   const doneButton = document.createElement('button');
@@ -113,16 +102,16 @@ const registerConflicts = (cc, conflicts) => {
       const state = conflict.state;
       const symbol = conflict.symbol;
       button.addEventListener('click', () => {
-	worker.postMessage({message:"choose", state, symbol, action} )      //
-	
-	formatOutputButton.addEventListener('click', formatOutput)
-	formatOutputButton.classList.toggle('inactive', false)
-	
+        worker.postMessage({ message: 'choose', state, symbol, action }); //
+
+        formatOutputButton.addEventListener('click', formatOutput);
+        formatOutputButton.classList.toggle('inactive', false);
+
         rerenderActionTableButton.addEventListener('click', rerenderActionTable);
         rerenderActionTableButton.classList.toggle('inactive', false);
 
-	copyCodeButton.removeEventListener('click', downloadCode)
-	copyCodeButton.classList.toggle('inactive', true)
+        copyCodeButton.removeEventListener('click', downloadCode);
+        copyCodeButton.classList.toggle('inactive', true);
       });
       optionBox.appendChild(optionHeader);
       optionBox.appendChild(button);
@@ -175,7 +164,7 @@ function fillActionTable(cc, rules) {
   const at = cc.actionTable;
   const gt = cc.gotoTable;
 
-  const terminals = rules.terminals
+  const terminals = rules.terminals;
   const head = document.createElement('tr');
   head.appendChild(document.createElement('th'));
   terminals.forEach(symbol => {
@@ -233,13 +222,13 @@ function fillGotoTable(cc, rules) {
   }
 }
 function fillRulesTable(rules) {
-  let id = -1
+  let id = -1;
   rules.forEach(rule => {
     const labelCell = document.createElement('td');
     const contentCell = document.createElement('td');
     const row = document.createElement('tr');
 
-    labelCell.textContent = String( id++ );
+    labelCell.textContent = String(id++);
     contentCell.textContent = rule;
     row.appendChild(labelCell);
     row.appendChild(contentCell);
@@ -267,13 +256,13 @@ const submitRules = () => {
   const rulesString = rulesArea.value;
   if (rulesString.trim() === '') return;
   worker.postMessage({
-	  message: "init",
-	  rulesString: rulesString
-  })
+    message: 'init',
+    rulesString: rulesString,
+  });
 
   submitButton.removeEventListener('click', submitRules);
   submitButton.classList.toggle('inactive', true);
-	/*
+  /*
   formatOutputButton.addEventListener('click', formatOutput);
   if (ConflictRecorder.getConflicts().length > 0) {
     registerConflicts(CC.exportData(), ConflictRecorder.exportData());
@@ -287,14 +276,13 @@ const submitRules = () => {
 
 const rerenderActionTable = () => {
   clearActionTable();
-  worker.postMessage({message:"query"})
+  worker.postMessage({ message: 'query' });
 };
 
 const writeCodeToClipBoard = () => {
   navigator.clipboard.writeText(declarations.innerText);
   //.catch(() => console.log('error copying to clipboard'))
 };
-
 
 const downloadCode = () => {
   const srcBlob = new Blob([sourceFileText]);
@@ -323,8 +311,8 @@ submitButton.addEventListener('click', submitRules);
 
 const formatOutput = () => {
   document.querySelector('#declarations').textContent = '';
-  worker.postMessage({message: "format"})
- /* const numStates = CC.getStates().length;
+  worker.postMessage({ message: 'format' });
+  /* const numStates = CC.getStates().length;
   const fileName = 'parser-tables';
 
   const actionTypeDecl = `typedef unsigned int Action;`;

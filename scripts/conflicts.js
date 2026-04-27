@@ -32,7 +32,13 @@ ConflictRecorder = (() => {
       console.log(`Conflict detected at state ${state}, symbol ${symbol}`);
       actions.forEach(action => console.log(action));
     };
-    conflict.export = () => { return {actions: conflict.getActions(), state: conflict.getState(), symbol: conflict.getSymbol() }}
+    conflict.export = () => {
+      return {
+        actions: conflict.getActions(),
+        state: conflict.getState(),
+        symbol: conflict.getSymbol(),
+      };
+    };
     Object.freeze(conflict);
     return conflict;
   };
@@ -62,7 +68,7 @@ ConflictRecorder = (() => {
   conflictRecorder.debug = () => {
     conflictsList.forEach(conflict => conflict.debug());
   };
-  conflictRecorder.exportData = () => conflictsList.map(conflict => conflict.export())
+  conflictRecorder.exportData = () => conflictsList.map(conflict => conflict.export());
 
   Object.freeze(conflictRecorder);
   return conflictRecorder;
