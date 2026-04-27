@@ -13,16 +13,53 @@ const conflictDialog = document.querySelector('#conflicts-dialog');
 const viewConflictsButton = document.querySelector('#view-conflicts-button');
 const rerenderActionTableButton = document.querySelector('#rerender-action-table-button');
 
-const registerConflicts = cc => {
-  const conflicts = ConflictRecorder.getConflicts();
+const worker = new Worker("./scripts/worker.js")
+worker.onerror = (event) => {
+  console.error('Worker error details:');
+  console.error(event.message)
+};
+console.log('Worker created:', worker);
+worker.onmessage = (messageData) => {
+	switch(messageData.message){
+	case "init":
+	
+  	fillStatesTable(messageData.cc.states);
+  	fillActionTable(messageData.cc, messageData.rules);
+  	fillGotoTable(messageData.cc, messageData.rules);
+  	fillRulesTable(messageData.rules.rules);
+
+  	document.querySelectorAll('table').forEach(table => (table.style.display = 'table'));
+  	document.querySelector('main').style.display = 'grid';
+
+  	fillSymbolsList(messageData.cc.rules);
+	break;
+	}
+/*
+  formatOutputButton.addEventListener('click', formatOutput);
+  submitButton.removeEventListener('click', submitRules);
+  submitButton.classList.toggle('inactive', true);
+  if (ConflictRecorder.getConflicts().length > 0) {
+    registerConflicts(CC.exportData(), ConflictRecorder.exportData());
+    viewConflictsButton.addEventListener('click', () => conflictDialog.showModal());
+    viewConflictsButton.classList.toggle('inactive', false);
+  }
+
+  formatOutputButton.classList.toggle('inactive', false);
+*/
+
+
+}
+
+
+const registerConflicts = (cc, conflicts) => {
   const doneButton = document.createElement('button');
   doneButton.textContent = 'Done';
   doneButton.addEventListener('click', () => conflictDialog.close());
   conflicts.forEach(conflict => {
     const section = document.createElement('div');
     section.classList = 'conflict-box';
-    const candidateActions = conflict.getActions();
-    const headerText = `State ${conflict.getState()} symbol ${conflict.getSymbol()}`;
+    const candidateActions = conflict.actions;
+    const headerText = `State ${conflict.state} symbol ${conflict.symbol}`;
     const header = document.createElement('h2');
     header.textContent = headerText;
     const optionsBar = document.createElement('div');
@@ -30,13 +67,13 @@ const registerConflicts = cc => {
       const optionBox = document.createElement('div');
       optionBox.classList = 'action-option-box';
       const optionHeader = document.createElement('h3');
-      optionHeader.textContent = `${action.action} ${action.rule === undefined ? action.state : action.rule.getId()}`;
+      optionHeader.textContent = `${action.action} ${action.rule === undefined ? action.state : action.rule}`;
       const button = document.createElement('button');
       button.textContent = 'apply';
-      const state = conflict.getState();
-      const symbol = conflict.getSymbol();
+      const state = conflict.state;
+      const symbol = conflict.symbol;
       button.addEventListener('click', () => {
-        cc.changeAction(state, symbol, action);
+//        cc.changeAction(state, symbol, action); NOTE: Functionality is broken during migration. Fix after migration to web worker is complete
         rerenderActionTableButton.addEventListener('click', rerenderActionTable);
         rerenderActionTableButton.classList.toggle('inactive', false);
         formatOutputButton.removeEventListener('click', formatOutput);
@@ -181,18 +218,22 @@ function clearGotoTable() {
 function clearStatesTable() {
   statesTable.innerHTML = '<caption>States and their representative LR(1) Items </caption>';
 }
+
 const submitRules = () => {
   const rulesString = rulesArea.value;
   if (rulesString.trim() === '') return;
-  Rules.initializeRules(rulesString);
-  const entry = Handle.makeHandle(Rules.getExpansionRules(Rules.getGoal())[0], EOF, 0);
-  CC.compute(entry);
-
+  worker.postMessage({
+	  message: "init",
+	  rulesString: rulesString
+  })
+/*
   fillStatesTable(CC.exportData().states);
   fillActionTable(CC.exportData(), Rules.exportData());
   fillGotoTable(CC.exportData(), Rules.exportData());
   fillRulesTable(Rules.exportData().rules);
+*/
 
+/*
   document.querySelectorAll('table').forEach(table => (table.style.display = 'table'));
   document.querySelector('main').style.display = 'grid';
 
@@ -202,17 +243,18 @@ const submitRules = () => {
   submitButton.removeEventListener('click', submitRules);
   submitButton.classList.toggle('inactive', true);
   if (ConflictRecorder.getConflicts().length > 0) {
-    registerConflicts(CC);
+    registerConflicts(CC.exportData(), ConflictRecorder.exportData());
     viewConflictsButton.addEventListener('click', () => conflictDialog.showModal());
     viewConflictsButton.classList.toggle('inactive', false);
   }
 
   formatOutputButton.classList.toggle('inactive', false);
+  */
 };
 
 const rerenderActionTable = () => {
   clearActionTable();
-  fillActionTable(CC, Rules);
+  fillActionTable(CC.exportData(), Rules.exportData());
 };
 
 const writeCodeToClipBoard = () => {

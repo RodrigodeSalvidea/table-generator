@@ -1,13 +1,24 @@
-importScripts('./rule.js','./handle.js','./canonicalCollection.js')
+importScripts('./globals.js','./rule.js','./handle.js','./canonicalCollection.js', './conflicts.js')
+console.log('Worker script loaded and executing!');
+//console.log(CC)
+debugger;
 
+onmessage = (m) => {
+	console.log("message recived")
+	const messageData = m.data
+	console.log(messageData)
+	Rules.initializeRules(messageData.rulesString);		
+	const entry = Handle.makeHandle(Rules.getExpansionRules(Rules.getGoal())[0], EOF, 0);
+	/*
+  	CC.compute(entry);
+	console.log("...computing cc in worker thread")
+	postMessage({
+		message: "init"
+		cc: CC.exportData(),
+		rules: rules.exportData()
+	})
+*/
 
-self.onmessage = (messageData) => {
-	switch(messageData.command){
-		case "init":
-		Rules.initializeRules(messageData.rulesString);		
-		const entry = Handle.makeHandle(Rules.getExpansionRules(Rules.getGoal())[0], EOF, 0);
-  		CC.compute(entry);
+	 
+}
 
-		case "resolveConflict"
-
-		case "
