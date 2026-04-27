@@ -65,6 +65,10 @@ worker.onmessage = (m) => {
 	sourceFileText = messageData.sourceFileText
 	break;
 
+	case "query":
+	 fillActionTable(messageData.cc, messageData.rules)
+	 
+
 	}
 /*
   formatOutputButton.addEventListener('click', formatOutput);
@@ -106,11 +110,11 @@ const registerConflicts = (cc, conflicts) => {
       const symbol = conflict.symbol;
       button.addEventListener('click', () => {
 //        cc.changeAction(state, symbol, action); NOTE: Functionality is broken during migration. Fix after migration to web worker is complete
+	worker.postMessage({message:"choose", state, symbol, action} )      //
+	formatOutputButton.addEventListener('click', formatOutput)
+	formatOutputButton.classList.toggle('inactive', false)
         rerenderActionTableButton.addEventListener('click', rerenderActionTable);
         rerenderActionTableButton.classList.toggle('inactive', false);
-        formatOutputButton.removeEventListener('click', formatOutput);
-        formatOutputButton.addEventListener('click', formatOutput);
-        formatOutputButton.classList.toggle('inactive', false);
       });
       optionBox.appendChild(optionHeader);
       optionBox.appendChild(button);
@@ -275,7 +279,7 @@ const submitRules = () => {
 
 const rerenderActionTable = () => {
   clearActionTable();
-  fillActionTable(CC.exportData(), Rules.exportData());
+  worker.postMessage({message:"query"})
 };
 
 const writeCodeToClipBoard = () => {

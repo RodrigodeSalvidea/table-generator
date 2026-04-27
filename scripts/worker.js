@@ -92,6 +92,13 @@ onmessage = (m) => {
     displayText,
   })
   break;
+  case "choose":
+  CC.changeAction(messageData.state, messageData.symbol, messageData.action)
+  break;
+
+  case "query":
+  postMessage( {message: "query", cc:CC.exportData(), rules: Rules.exportData()} )
+
   default:
   console.log("worker message not recognized");
   break;
