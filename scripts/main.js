@@ -33,6 +33,14 @@ worker.onmessage = (m) => {
   	document.querySelector('main').style.display = 'grid';
 
   	fillSymbolsList(messageData.rules);
+
+  	if (messageData.conflicts.length > 0) {
+    	  registerConflicts(messageData.cc, messsageData.conflicts);
+    	  viewConflictsButton.addEventListener('click', () => conflictDialog.showModal());
+    	  viewConflictsButton.classList.toggle('inactive', false);
+  	}
+
+
 	break;
 	}
 /*

@@ -16,7 +16,8 @@ onmessage = (m) => {
 	postMessage({
 		message: "init",
 		cc: CC.exportData(),
-		rules: Rules.exportData()
+		rules: Rules.exportData(),
+		conflicts: ConflictRecorder.exportData()
 	})
 	break;
 	}
