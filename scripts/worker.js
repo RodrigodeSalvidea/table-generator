@@ -6,29 +6,23 @@ importScripts(
   './conflicts.js',
   './formatter.js'
 );
-console.log('Worker script loaded and executing!');
+//console.log('Worker script loaded and executing!');
 //console.log(CC)
 //debugger;
 
 onmessage = m => {
-  console.log('message recived');
   const messageData = m.data;
-  console.log(messageData);
   switch (messageData.message) {
     case 'init':
       Rules.initializeRules(messageData.rulesString);
       const entry = Handle.makeHandle(Rules.getExpansionRules(Rules.getGoal())[0], EOF, 0);
       CC.compute(entry);
-      console.log(CC.exportData(), Rules.exportData());
       postMessage({
         message: 'init',
         cc: CC.exportData(),
         rules: Rules.exportData(),
         conflicts: ConflictRecorder.exportData(),
       });
-      break;
-    case 'edit':
-      console.log('worker will edit the CC object');
       break;
     case 'format':
       const numStates = CC.getStates().length;

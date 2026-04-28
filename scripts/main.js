@@ -21,7 +21,6 @@ worker.onerror = event => {
   console.error('Worker error details:');
   console.error(event.message);
 };
-console.log('Worker created:', worker);
 worker.onmessage = m => {
   const messageData = m.data;
   switch (messageData.message) {
