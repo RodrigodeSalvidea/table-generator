@@ -284,7 +284,7 @@ const writeCodeToClipBoard = () => {
 };
 
 const downloadCode = () => {
-  const srcBlob = new Blob([sourceFileText]);
+  const srcBlob = new Blob([sourceFileText], {type: 'text/plain'});
   const srcUrl = URL.createObjectURL(srcBlob);
   const srcA = document.createElement('a');
   srcA.style.display = 'none';
@@ -295,7 +295,7 @@ const downloadCode = () => {
   document.body.removeChild(srcA);
   URL.revokeObjectURL(srcUrl);
 
-  const headBlob = new Blob([headerFileText]);
+  const headBlob = new Blob([headerFileText], {type: 'text/plain'});
   const headUrl = URL.createObjectURL(headBlob);
   const headA = document.createElement('a');
   headA.style.display = 'none';
