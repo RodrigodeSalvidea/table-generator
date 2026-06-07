@@ -227,7 +227,7 @@ function fillRulesTable(rules) {
     const contentCell = document.createElement('td');
     const row = document.createElement('tr');
 
-    labelCell.textContent = String(id++);
+    labelCell.textContent = String(++id);
     contentCell.textContent = rule;
     row.appendChild(labelCell);
     row.appendChild(contentCell);
